@@ -1,0 +1,11 @@
+---
+grpc:
+  port: 50051
+  reflection: false
+
+postgres:
+  host: postgres
+  port: 5432
+  database: postgres
+  username: postgres
+  password: postgres

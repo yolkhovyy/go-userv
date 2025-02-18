@@ -1,0 +1,19 @@
+# vscode
+.vscode
+
+# delve
+**/__debug_bin*
+
+# mockery
+**/mock_*.go
+
+# Generated folders and files
+coverage/
+test_results/
+docs/dep-*.*
+
+# Keep secrets local
+.env
+
+# Snyk
+.dccache
