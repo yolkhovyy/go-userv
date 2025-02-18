@@ -2,13 +2,18 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/spf13/viper"
+	"github.com/yolkhovyy/user/internal/config"
 	"github.com/yolkhovyy/user/internal/notifier"
 	router "github.com/yolkhovyy/user/internal/router/grpc"
 	server "github.com/yolkhovyy/user/internal/server/grpc"
 	"github.com/yolkhovyy/user/internal/storage"
+)
+
+const (
+	defaultGRPCPort   = 50501
+	defaultRouterMode = "release"
 )
 
 type Config struct {
@@ -18,32 +23,14 @@ type Config struct {
 	Router   router.Config   `yaml:"router" mapstructure:"Router"`
 }
 
-func (c *Config) Load(configFile string, prefix string) error {
-	c.initDefaults()
+func (c *Config) Load(prefix string) error {
+	viper.SetDefault("GRPC.Port", defaultGRPCPort)
+	viper.SetDefault("Router.Mode", defaultRouterMode)
 
-	viper.Reset()
-	viper.SetConfigFile(configFile)
-	viper.SetEnvPrefix(prefix)
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("config read error: %w", err)
-	}
-
-	if err := viper.Unmarshal(c); err != nil {
-		return fmt.Errorf("config unmarshal error: %w", err)
+	err := config.Load(prefix, c)
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
 	}
 
 	return nil
 }
-
-func (c *Config) initDefaults() {
-	viper.SetDefault("HTTP.Port", defaultHTTPPort)
-	viper.SetDefault("Router.Mode", defaultRouterMode)
-}
-
-const (
-	defaultHTTPPort   = 8080
-	defaultRouterMode = "release"
-)
