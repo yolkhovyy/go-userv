@@ -1,0 +1,26 @@
+---
+linters:
+  enable-all: true
+  disable:
+    - tagalign # Go formatter does not align tags as golangci-lint expects
+    - depguard # Not using yet
+    - godox # There are TODOs
+    - nolintlint # Not using yet
+    - exhaustruct # FIXME
+    - testpackage # Not using yet
+    - tenv # Deprecated
+
+linters-settings:
+  varnamelen:
+    ignore-type-assert-ok: true
+    ignore-decls:
+      - t testing.T
+      - i int
+      - j int
+  funlen:
+    lines: 65
+
+issues:
+  exclude-files:
+    - "mock_.*\\.go"
+    - ".*\\.pb\\.go"
