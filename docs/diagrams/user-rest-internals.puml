@@ -1,0 +1,47 @@
+@startuml users-internals
+
+scale max 1200 width
+hide footbox
+skinparam ParticipantPadding 20
+
+title User REST Service Internals
+
+collections "Clients" as CLIENT #CCCCFF
+collections "HTTP Router\nand Handlers" as ROUTER #99FF99
+participant "Domain" as DOMAIN #99FF99
+participant "Storage" as STORAGE #99FF99
+database "PostgreSQL" as POSTGRES #FFCCCC
+
+== User Internal Interactions ==
+CLIENT -> ROUTER : HTTP Request
+
+activate ROUTER #99FF99
+ROUTER -> DOMAIN:
+deactivate ROUTER
+
+activate DOMAIN #99FF99
+DOMAIN -> STORAGE: 
+deactivate ROUTER
+
+activate STORAGE #99FF99
+deactivate DOMAIN
+STORAGE -> POSTGRES: SQL request
+
+deactivate STORAGE
+activate POSTGRES #FFCCCC
+STORAGE <- POSTGRES: SQL response
+deactivate POSTGRES
+activate STORAGE #99FF99
+
+DOMAIN <- STORAGE: 
+deactivate STORAGE
+activate DOMAIN #99FF99
+
+ROUTER <- DOMAIN:
+deactivate DOMAIN
+
+activate ROUTER #99FF99
+CLIENT <- ROUTER : HTTP Response
+deactivate ROUTER
+
+@enduml

@@ -1,0 +1,19 @@
+---
+grpc:
+  port: 50051
+  reflection: false
+
+router:
+  mode: release
+
+postgres:
+  host: postgres
+  port: 5432
+  database: postgres
+  username: postgres
+  password: postgres
+  enableNotifier: true
+
+kafka:
+  brokers:
+    - kafka:9092
