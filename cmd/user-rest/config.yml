@@ -1,0 +1,15 @@
+---
+http:
+  port: 8080
+  shutdownTimeout: 5s
+  readHeaderTimeout: 1s
+
+router:
+  mode: release
+
+postgres:
+  host: postgres
+  port: 5432
+  database: postgres
+  username: postgres
+  password: postgres

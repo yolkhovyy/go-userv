@@ -1,0 +1,39 @@
+@startuml users-interactions
+
+scale max 1200 width
+hide footbox
+skinparam ParticipantPadding 20
+
+title User Management Service Interactions
+
+collections "Clients" as CLIENT #CCCCFF
+collections "User\nREST\ngRPC" as USER #99FF99
+database "PostgreSQL" as POSTGRES #FFCCCC
+participant "User\nNotifier" as USERN #99FF99
+queue "Kafka" as KAFKA #FFCCCC
+collections "Consumers" as CONSUMERS #CCCCFF
+
+== User Service Interactions ==
+CLIENT -> USER : HTTP/gRPC Request
+
+activate USER #99FF99
+USER -> POSTGRES: SQL request
+deactivate USER
+
+activate POSTGRES #FFCCCC
+USER <- POSTGRES: SQL response
+activate USER #99FF99
+
+CLIENT <- USER : HTTP/gRPC Response
+deactivate USER
+
+POSTGRES -> USERN: Notify
+deactivate POSTGRES
+activate USERN #99FF99
+USERN -> KAFKA: Produce
+deactivate USERN
+activate KAFKA #FFCCCC
+KAFKA -> CONSUMERS: Consume
+deactivate KAFKA
+
+@enduml
