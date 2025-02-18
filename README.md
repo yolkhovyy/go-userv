@@ -1,6 +1,8 @@
 # User Management Services
 
-User Management Services implemented in Go, providing:
+This is a Go Microservice Playground project, implementing User Management Services with REST and gRPC APIs, PostgreSQL storage, and Kafka notifications.
+
+Provides:
 
 * HTTP API
   * POST /api/v1/user
@@ -191,20 +193,20 @@ docker compose logs -f
 
 #### Selective Logs
 ```bash
-docker compose logs -f user
+docker compose logs -f user-rest
 ```
 ```bash
-docker compose logs -f user kafka
+docker compose logs -f user-notifier kafka
 ```
 ```bash
-docker compose logs -f user postgres
+docker compose logs -f user-grpc postgres
 ```
 
 ### Start dependency services only
 ```bash
 make dc-up-dependencies
 ```
-* Now you can run and debug the `user` service in vscode
+* Now you can run and debug the `user-*` service in vscode
 
 ### Kafka consumer
 In 2nd terminal
@@ -238,7 +240,7 @@ make clean
 
 ### Remove docker volume
 ```bash
-docker volume rm user_user-data
+docker volume rm go-userv_user-data
 ```
 * Removes the docker volume with user data in PostgreSQL database
 
