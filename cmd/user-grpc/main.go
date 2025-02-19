@@ -8,7 +8,7 @@ import (
 
 	"github.com/yolkhovyy/user/internal/domain"
 	"github.com/yolkhovyy/user/internal/logger"
-	router "github.com/yolkhovyy/user/internal/router/grpc"
+	grpcrouter "github.com/yolkhovyy/user/internal/router/grpc"
 	grpcserver "github.com/yolkhovyy/user/internal/server/grpc"
 )
 
@@ -54,10 +54,10 @@ func run() int {
 	}()
 
 	// Create router.
-	router := router.New(config.Router, domain)
+	router := grpcrouter.New(config.Router, domain)
 
 	// Create and run gRPC grpcServer.
-	grpcServer := grpcserver.New(config.GRPC, router)
+	grpcServer := grpcserver.New(config.GRPC, router, grpcrouter.Interceptors()...)
 	if err := grpcServer.Run(ctx); err != nil {
 		log.Error().Err(err).Msg("grpc server")
 

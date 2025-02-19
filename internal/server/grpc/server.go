@@ -19,8 +19,8 @@ type Server struct {
 }
 
 //nolint:ireturn
-func New(config Config, serviceServer userpb.UserServiceServer) server.Contract {
-	grpcServer := grpc.NewServer()
+func New(config Config, serviceServer userpb.UserServiceServer, opts ...grpc.ServerOption) server.Contract {
+	grpcServer := grpc.NewServer(opts...)
 	userpb.RegisterUserServiceServer(grpcServer, serviceServer)
 
 	if config.Reflection {
