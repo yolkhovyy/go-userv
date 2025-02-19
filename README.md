@@ -129,7 +129,7 @@ go-userv
 
 ## Build System
 
-The service build system is constructed with GNU Make and Docker BuildKit.
+The service build system is constructed with [GNU Make](https://www.gnu.org/software/make/) and [Docker BuildKit](https://docs.docker.com/build/buildkit/).
 
 * [Makefile](./Makefile) and [make/*.mk](./make)
 * [docker-compose.yml](./docker-compose.yml)
