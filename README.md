@@ -252,3 +252,10 @@ docker volume rm go-userv_user-data
 ```
 * Returns health status of the User Service
 
+### TODO
+* Testing
+  * More unit tests
+  * Implement integration tests
+* API annotaions and documentation
+* Telemetry
+* Postgres consistency
