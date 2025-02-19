@@ -48,7 +48,7 @@ Provides:
 * HTTP [server](./internal/server/http/server.go), [router](./internal/router/gin/controller.go) and [handlers](./internal/router/gin/handlers.go)  
 * gRPC [server](./internal/server/grpc/server.go), [router](./internal/router/grpc/controller.go) and [handlers](./internal/router/grpc/handlers.go)  
 * [Domain](./internal/domain/domain.go) - user domain logic
-* [Storage](./internal/storage/storage.go) - database adapter
+* [Storage](./internal/storage/postgres/storage.go) - database adapter
 * [Notifier](./internal/notifier/controller.go) - user changes notifier
 
 ### Used Go Modules
