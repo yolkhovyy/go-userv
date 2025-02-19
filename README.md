@@ -67,7 +67,7 @@ Provides:
 
 ### Directory Structure
 ```
-user
+go-userv
 ├── cmd
 │   └── user-*
 │       ├── config.go
@@ -77,9 +77,9 @@ user
 ├── coverage
 │   └── *.html, *.xml
 ├── db
-│   ├── migrations
-│   │   └── *.sql
-│   └── schema
+│   └── postgres
+│       ├── migrations
+│       │   └── *.sql
 │       └── init.sql
 ├── docs
 │   └── diagrams
@@ -112,7 +112,8 @@ user
 │   │   └── http
 │   │       └── *.go
 │   └── storage
-│       └── *.go
+│       └── postgres
+│           └── *.go
 ├── make
 │   └── *.mk
 ├── results
@@ -125,6 +126,7 @@ user
 ├── Makefile
 └── README.md
 ```
+
 ## Build System
 
 The service build system is constructed with GNU Make and Docker BuildKit.

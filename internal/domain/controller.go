@@ -5,24 +5,24 @@ import (
 	"fmt"
 
 	"github.com/yolkhovyy/user/internal/contract/domain"
-	"github.com/yolkhovyy/user/internal/contract/storage"
-	storagec "github.com/yolkhovyy/user/internal/storage"
+	storagec "github.com/yolkhovyy/user/internal/contract/storage"
+	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
 
 type Controller struct {
-	storage storage.Contract
+	storage storagec.Contract
 }
 
 //nolint:ireturn
 func New(
 	ctx context.Context,
-	storageConfig storagec.Config,
+	config storage.Config,
 ) (domain.Contract, error) {
 	var err error
 
 	controller := Controller{}
 
-	controller.storage, err = storagec.New(ctx, storageConfig)
+	controller.storage, err = storage.New(ctx, config)
 	if err != nil {
 		return nil, fmt.Errorf("storage: %w", err)
 	}

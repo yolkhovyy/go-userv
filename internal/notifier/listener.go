@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/yolkhovyy/user/internal/storage"
+	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
 
 type Listener struct {

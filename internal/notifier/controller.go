@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/yolkhovyy/user/internal/contract/server"
-	"github.com/yolkhovyy/user/internal/storage"
+	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 	"golang.org/x/sync/semaphore"
 )
 

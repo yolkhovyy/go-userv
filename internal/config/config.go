@@ -9,7 +9,9 @@ import (
 )
 
 func Load(prefix string, config any) error {
-	configFile := flag.String("config", "config.yml", "Path to the configuration file (default: config.yml)")
+	configFile := flag.String("config", "config.yml",
+		"Path to the configuration file (default: config.yml)")
+
 	flag.Parse()
 
 	viper.Reset()

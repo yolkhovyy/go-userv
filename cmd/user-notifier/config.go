@@ -5,7 +5,7 @@ import (
 
 	"github.com/yolkhovyy/user/internal/config"
 	"github.com/yolkhovyy/user/internal/notifier"
-	"github.com/yolkhovyy/user/internal/storage"
+	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
 
 type Config struct {

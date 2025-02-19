@@ -9,7 +9,7 @@ import (
 	"github.com/yolkhovyy/user/internal/notifier"
 	router "github.com/yolkhovyy/user/internal/router/gin"
 	"github.com/yolkhovyy/user/internal/server/http"
-	"github.com/yolkhovyy/user/internal/storage"
+	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
 
 const (

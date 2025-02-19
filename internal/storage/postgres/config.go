@@ -1,4 +1,4 @@
-package storage
+package postgres
 
 type Config struct {
 	Host           string `yaml:"host" mapstructure:"Host"`
