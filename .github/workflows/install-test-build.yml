@@ -30,6 +30,13 @@ jobs:
           name: test-results
           path: results/unit-tests.xml
 
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          name: Go Test Results
+          path: results/unit-tests.xml
+          reporter: java-junit
+
       - name: Generate coverage report
         run: make coverage
 
@@ -44,6 +51,11 @@ jobs:
         with:
           name: coverage-html
           path: coverage/system.html
+
+      - name: Show Coverage in GitHub Summary
+        run: |
+          echo "### 📊 Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          go tool cover -func=coverage/system.out | tee -a $GITHUB_STEP_SUMMARY
 
       - name: Build project
         run: make build
