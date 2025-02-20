@@ -38,10 +38,10 @@ func New(ctx context.Context, config Config) (storage.Contract, error) {
 	}, nil
 }
 
-func (u *Controller) Close() error {
+func (c *Controller) Close() error {
 	log.Debug().Msg("database closing")
 
-	u.pool.Close()
+	c.pool.Close()
 
 	log.Trace().Msg("database closed")
 

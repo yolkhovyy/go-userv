@@ -21,9 +21,9 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	UserService_Create_FullMethodName = "/user.UserService/Create"
+	UserService_Update_FullMethodName = "/user.UserService/Update"
 	UserService_Get_FullMethodName    = "/user.UserService/Get"
 	UserService_List_FullMethodName   = "/user.UserService/List"
-	UserService_Update_FullMethodName = "/user.UserService/Update"
 	UserService_Delete_FullMethodName = "/user.UserService/Delete"
 )
 
@@ -32,9 +32,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	Create(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error)
+	Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error)
 	Get(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*User, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*Users, error)
-	Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error)
 	Delete(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -50,6 +50,16 @@ func (c *userServiceClient) Create(ctx context.Context, in *UserInput, opts ...g
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(User)
 	err := c.cc.Invoke(ctx, UserService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(User)
+	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,16 +86,6 @@ func (c *userServiceClient) List(ctx context.Context, in *ListRequest, opts ...g
 	return out, nil
 }
 
-func (c *userServiceClient) Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(User)
-	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userServiceClient) Delete(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*empty.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(empty.Empty)
@@ -101,9 +101,9 @@ func (c *userServiceClient) Delete(ctx context.Context, in *UserID, opts ...grpc
 // for forward compatibility.
 type UserServiceServer interface {
 	Create(context.Context, *UserInput) (*User, error)
+	Update(context.Context, *UserInput) (*User, error)
 	Get(context.Context, *UserID) (*User, error)
 	List(context.Context, *ListRequest) (*Users, error)
-	Update(context.Context, *UserInput) (*User, error)
 	Delete(context.Context, *UserID) (*empty.Empty, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
@@ -118,14 +118,14 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) Create(context.Context, *UserInput) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
+func (UnimplementedUserServiceServer) Update(context.Context, *UserInput) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
 func (UnimplementedUserServiceServer) Get(context.Context, *UserID) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedUserServiceServer) List(context.Context, *ListRequest) (*Users, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
-}
-func (UnimplementedUserServiceServer) Update(context.Context, *UserInput) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedUserServiceServer) Delete(context.Context, *UserID) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -169,6 +169,24 @@ func _UserService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Update(ctx, req.(*UserInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserID)
 	if err := dec(in); err != nil {
@@ -205,24 +223,6 @@ func _UserService_List_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Update(ctx, req.(*UserInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserID)
 	if err := dec(in); err != nil {
@@ -253,16 +253,16 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_Create_Handler,
 		},
 		{
+			MethodName: "Update",
+			Handler:    _UserService_Update_Handler,
+		},
+		{
 			MethodName: "Get",
 			Handler:    _UserService_Get_Handler,
 		},
 		{
 			MethodName: "List",
 			Handler:    _UserService_List_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _UserService_Update_Handler,
 		},
 		{
 			MethodName: "Delete",

@@ -52,7 +52,7 @@ func New(storageConfig storage.Config, kafkaConfig Config) (server.Contract, err
 }
 
 //nolint:funlen,cyclop
-func (u *Controller) Run(ctx context.Context) error {
+func (c *Controller) Run(ctx context.Context) error {
 	// TODO: Inspect hard-coded values.
 	const (
 		topic     = "postgres.public.users"
@@ -61,13 +61,13 @@ func (u *Controller) Run(ctx context.Context) error {
 		rateLimit = 500
 	)
 
-	err := u.pqListener.Listen(channel)
+	err := c.pqListener.Listen(channel)
 	if err != nil {
 		return fmt.Errorf("notifier listen: %w", err)
 	}
 
 	defer func() {
-		if err := u.kafkaWriter.Close(); err != nil {
+		if err := c.kafkaWriter.Close(); err != nil {
 			log.Error().Err(err).Msg("kafka writer close")
 		}
 	}()
@@ -87,7 +87,7 @@ func (u *Controller) Run(ctx context.Context) error {
 
 			return nil
 
-		case notification := <-u.pqListener.Notify:
+		case notification := <-c.pqListener.Notify:
 			if notification == nil {
 				continue
 			}
@@ -101,7 +101,7 @@ func (u *Controller) Run(ctx context.Context) error {
 				}
 				defer rateLimiter.Release(1)
 
-				err = u.kafkaWriter.WriteMessages(ctx, kafka.Message{
+				err = c.kafkaWriter.WriteMessages(ctx, kafka.Message{
 					Topic: topic,
 					Key:   []byte(key),
 					Value: []byte(notification.Extra),

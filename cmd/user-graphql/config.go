@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/yolkhovyy/user/internal/config"
-	router "github.com/yolkhovyy/user/internal/router/gin"
+	router "github.com/yolkhovyy/user/internal/router/graphql"
 	"github.com/yolkhovyy/user/internal/server/http"
 	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
@@ -28,7 +28,6 @@ func (c *Config) Load(prefix string) error {
 	viper.SetDefault("HTTP.Port", defaultHTTPPort)
 	viper.SetDefault("HTTP.ShutdownTimeout", defaultHTTPShutdownTimeout)
 	viper.SetDefault("HTTP.readHeaderTimeout", defaultHTTPReadHeaderTimeout)
-	viper.SetDefault("Router.Mode", defaultRouterMode)
 
 	err := config.Load(prefix, c)
 	if err != nil {

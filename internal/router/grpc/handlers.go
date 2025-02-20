@@ -14,19 +14,7 @@ import (
 )
 
 func (c *Controller) Create(ctx context.Context, req *userpb.UserInput) (*userpb.User, error) {
-	var err error
-
-	var userID uuid.UUID
-
-	if req.GetId() != "" {
-		userID, err = uuid.Parse(req.GetId())
-		if err != nil {
-			return nil, fmt.Errorf("user id: %w", err)
-		}
-	}
-
 	userInput := dto.UserInput{
-		ID:        userID,
 		FirstName: req.GetFirstName(),
 		LastName:  req.GetLastName(),
 		Nickname:  req.GetNickname(),
@@ -90,17 +78,7 @@ func (c *Controller) List(ctx context.Context, req *userpb.ListRequest) (*userpb
 }
 
 func (c *Controller) Update(ctx context.Context, req *userpb.UserInput) (*userpb.User, error) {
-	var err error
-
-	var userID uuid.UUID
-
-	userID, err = uuid.Parse(req.GetId())
-	if err != nil {
-		return nil, fmt.Errorf("user id: %w", err)
-	}
-
 	userInput := dto.UserInput{
-		ID:        userID,
 		FirstName: req.GetFirstName(),
 		LastName:  req.GetLastName(),
 		Nickname:  req.GetNickname(),

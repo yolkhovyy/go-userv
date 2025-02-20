@@ -14,7 +14,7 @@ type Controller struct {
 }
 
 func New(config Config, domain domain.Contract) *Controller {
-	user := Controller{
+	controller := Controller{
 		domain: domain,
 	}
 
@@ -25,27 +25,27 @@ func New(config Config, domain domain.Contract) *Controller {
 	engine.Use(gin.Recovery(), Logger())
 
 	// Health check.
-	engine.GET("/health", user.health)
+	engine.GET("/health", controller.health)
 
 	// API endpoints.
 	group := engine.Group("/api/v1")
 	{
-		group.POST("/user", user.create)
-		group.GET("/user/:id", user.get)
-		group.GET("/users", user.list)
-		group.PUT("/user/:id", user.update)
-		group.DELETE("/user/:id", user.delete)
+		group.POST("/user", controller.create)
+		group.GET("/user/:id", controller.get)
+		group.GET("/users", controller.list)
+		group.PUT("/user/:id", controller.update)
+		group.DELETE("/user/:id", controller.delete)
 	}
 
-	user.handler = engine
+	controller.handler = engine
 
-	return &user
+	return &controller
 }
 
-func (u *Controller) Close() error {
+func (c *Controller) Close() error {
 	log.Debug().Msg("router closing")
 
-	if err := u.domain.Close(); err != nil {
+	if err := c.domain.Close(); err != nil {
 		log.Error().Err(err).Msg("router domain close")
 	}
 
@@ -54,6 +54,6 @@ func (u *Controller) Close() error {
 	return nil
 }
 
-func (u *Controller) Handler() http.Handler {
-	return u.handler
+func (c *Controller) Handler() http.Handler {
+	return c.handler
 }

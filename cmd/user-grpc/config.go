@@ -5,9 +5,8 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/yolkhovyy/user/internal/config"
-	"github.com/yolkhovyy/user/internal/notifier"
-	grpcrouter "github.com/yolkhovyy/user/internal/router/grpc"
-	grpcserver "github.com/yolkhovyy/user/internal/server/grpc"
+	router "github.com/yolkhovyy/user/internal/router/grpc"
+	server "github.com/yolkhovyy/user/internal/server/grpc"
 	storage "github.com/yolkhovyy/user/internal/storage/postgres"
 )
 
@@ -17,15 +16,13 @@ const (
 )
 
 type Config struct {
-	GRPC     grpcserver.Config `yaml:"grpc" mapstructure:"GRPC"`
-	Postgres storage.Config    `yaml:"postgres" mapstructure:"Postgres"`
-	Kafka    notifier.Config   `yaml:"kafka" mapstructure:"Kafka"`
-	Router   grpcrouter.Config `yaml:"router" mapstructure:"Router"`
+	GRPC     server.Config  `yaml:"grpc" mapstructure:"GRPC"`
+	Postgres storage.Config `yaml:"postgres" mapstructure:"Postgres"`
+	Router   router.Config  `yaml:"router" mapstructure:"Router"`
 }
 
 func (c *Config) Load(prefix string) error {
 	viper.SetDefault("GRPC.Port", defaultGRPCPort)
-	viper.SetDefault("Router.Mode", defaultRouterMode)
 
 	err := config.Load(prefix, c)
 	if err != nil {

@@ -1,5 +1,4 @@
 package grpc
 
-type Config struct {
-	Mode string `yaml:"mode" mapstructure:"Mode"`
-}
+// TODO: Add config fields if needed.
+type Config struct{}

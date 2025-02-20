@@ -9,7 +9,7 @@ services:
       kafka-initializer:
         condition: service_completed_successfully
     ports:
-      - ${USER_HTTP_PORT:-8080}:8080
+      - 8080:${USER_HTTP_PORT:-8080}
     build:
       context: .
       dockerfile: cmd/user-rest/Dockerfile
@@ -24,7 +24,31 @@ services:
       - USER_POSTGRES_DATABASE
       - USER_POSTGRES_USERNAME
       - USER_POSTGRES_PASSWORD
-      - USER_KAFKA_BROKERS
+
+  user-graphql:
+    image: yolkhovyy/user-graphql:${USER_VERSION:?must be set in .env}
+    stop_signal: SIGINT
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka-initializer:
+        condition: service_completed_successfully
+    ports:
+      - 8081:${USER_HTTP_PORT:-8080}
+    build:
+      context: .
+      dockerfile: cmd/user-graphql/Dockerfile
+      target: ${USER_BUILDTARGET:-release}
+    environment:
+      - USER_ROUTER_MODE
+      - USER_HTTP_PORT
+      - USER_HTTP_SHUTDOWNTIMEOUT
+      - USER_HTTP_READHEADERTIMEOUT
+      - USER_POSTGRES_HOST
+      - USER_POSTGRES_PORT
+      - USER_POSTGRES_DATABASE
+      - USER_POSTGRES_USERNAME
+      - USER_POSTGRES_PASSWORD
 
   user-grpc:
     image: yolkhovyy/user-grpc:${USER_VERSION:?must be set in .env}
@@ -35,7 +59,7 @@ services:
       kafka-initializer:
         condition: service_completed_successfully
     ports:
-      - ${USER_GRPC_PORT:-50051}:50051
+      - 50051:${USER_GRPC_PORT:-50051}
     build:
       context: .
       dockerfile: cmd/user-grpc/Dockerfile
@@ -49,7 +73,6 @@ services:
       - USER_POSTGRES_DATABASE
       - USER_POSTGRES_USERNAME
       - USER_POSTGRES_PASSWORD
-      - USER_KAFKA_BROKERS
 
   user-notifier:
     image: yolkhovyy/user-notifier:${USER_VERSION:?must be set in .env}

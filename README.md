@@ -11,10 +11,10 @@ Provides:
   * PUT /api/v1/user/:id with JSON body
   * DELETE /api/v1/user/:id
 * gRPC API:
-  * Create(UserInput)
+  * Create(UserCreate)
   * Get(UserID)
   * List(ListRequest)
-  * Update(UserInput)
+  * Update(UserUpdate)
   * Delete(UserID)
 * User change notifications via Kafka
 * Health check

@@ -5,6 +5,8 @@ go 1.23
 require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang/protobuf v1.5.4
+	github.com/graphql-go/graphql v0.8.1
+	github.com/graphql-go/handler v0.2.4
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/lib/pq v1.10.2
 	github.com/rs/zerolog v1.27.0

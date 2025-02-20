@@ -9,11 +9,11 @@ import (
 	"github.com/yolkhovyy/user/contract/dto"
 )
 
-func (u *Controller) health(gctx *gin.Context) {
+func (c *Controller) health(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, gin.H{"message": "healthy"})
 }
 
-func (u *Controller) create(gctx *gin.Context) {
+func (c *Controller) create(gctx *gin.Context) {
 	var userInput dto.UserInput
 	if err := gctx.ShouldBindJSON(&userInput); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -27,7 +27,7 @@ func (u *Controller) create(gctx *gin.Context) {
 		return
 	}
 
-	createdUser, err := u.domain.Create(gctx.Request.Context(), dto.UserInputToDomain(userInput))
+	createdUser, err := c.domain.Create(gctx.Request.Context(), dto.UserInputToDomain(userInput))
 	if err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -37,25 +37,10 @@ func (u *Controller) create(gctx *gin.Context) {
 	gctx.JSON(http.StatusCreated, createdUser)
 }
 
-func (u *Controller) update(gctx *gin.Context) {
+func (c *Controller) update(gctx *gin.Context) {
 	var user dto.UserInput
 	if err := gctx.ShouldBindJSON(&user); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		return
-	}
-
-	userID, err := uuid.Parse(gctx.Param("id"))
-	if err != nil {
-		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		return
-	}
-
-	if user.ID == uuid.Nil {
-		user.ID = userID
-	} else if user.ID != userID {
-		gctx.JSON(http.StatusBadRequest, gin.H{"error": ErrUUIDConflict.Error()})
 
 		return
 	}
@@ -66,7 +51,7 @@ func (u *Controller) update(gctx *gin.Context) {
 		return
 	}
 
-	updatedUser, err := u.domain.Update(gctx.Request.Context(), dto.UserInputToDomain(user))
+	updatedUser, err := c.domain.Update(gctx.Request.Context(), dto.UserInputToDomain(user))
 	if err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -76,7 +61,7 @@ func (u *Controller) update(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, updatedUser)
 }
 
-func (u *Controller) get(gctx *gin.Context) {
+func (c *Controller) get(gctx *gin.Context) {
 	userID, err := uuid.Parse(gctx.Param("id"))
 	if err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -84,7 +69,7 @@ func (u *Controller) get(gctx *gin.Context) {
 		return
 	}
 
-	user, err := u.domain.Get(gctx.Request.Context(), userID)
+	user, err := c.domain.Get(gctx.Request.Context(), userID)
 	if err != nil {
 		gctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 
@@ -94,7 +79,7 @@ func (u *Controller) get(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, dto.UserFromDomain(*user))
 }
 
-func (u *Controller) list(gctx *gin.Context) {
+func (c *Controller) list(gctx *gin.Context) {
 	const (
 		defaultPage  = 1
 		defaultLimit = 10
@@ -121,7 +106,7 @@ func (u *Controller) list(gctx *gin.Context) {
 		return
 	}
 
-	list, err := u.domain.List(gctx.Request.Context(), page, limit, country)
+	list, err := c.domain.List(gctx.Request.Context(), page, limit, country)
 	if err != nil {
 		gctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 
@@ -131,7 +116,7 @@ func (u *Controller) list(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, dto.UsersFromDomain(*list))
 }
 
-func (u *Controller) delete(gctx *gin.Context) {
+func (c *Controller) delete(gctx *gin.Context) {
 	userID, err := uuid.Parse(gctx.Param("id"))
 	if err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -139,7 +124,7 @@ func (u *Controller) delete(gctx *gin.Context) {
 		return
 	}
 
-	err = u.domain.Delete(gctx.Request.Context(), userID)
+	err = c.domain.Delete(gctx.Request.Context(), userID)
 	if err != nil {
 		gctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 

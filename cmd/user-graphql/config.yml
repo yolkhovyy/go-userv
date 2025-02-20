@@ -1,11 +1,7 @@
----
 http:
   port: 8080
   shutdownTimeout: 5s
   readHeaderTimeout: 1s
-
-router:
-  mode: release
 
 postgres:
   host: postgres

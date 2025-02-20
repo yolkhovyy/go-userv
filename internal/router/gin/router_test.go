@@ -25,7 +25,6 @@ func TestUser_create(t *testing.T) {
 
 		userInput := domain.UserInput(
 			storage.UserInput{
-				ID:        uuid.New(),
 				FirstName: "John",
 				LastName:  "Doe",
 				Nickname:  "john.doe",
@@ -39,7 +38,7 @@ func TestUser_create(t *testing.T) {
 		require.NoError(t, err)
 
 		createdUser := domain.User{
-			ID:        userInput.ID,
+			ID:        uuid.New(),
 			FirstName: userInput.FirstName,
 			LastName:  userInput.LastName,
 			Nickname:  userInput.Nickname,
@@ -79,7 +78,6 @@ func TestUser_update(t *testing.T) {
 
 		userInput := domain.UserInput(
 			storage.UserInput{
-				ID:        uuid.New(),
 				FirstName: "John",
 				LastName:  "Doe",
 				Nickname:  "john.doe",
@@ -93,7 +91,7 @@ func TestUser_update(t *testing.T) {
 		require.NoError(t, err)
 
 		updatedUser := domain.User{
-			ID:        userInput.ID,
+			ID:        uuid.New(),
 			FirstName: userInput.FirstName,
 			LastName:  userInput.LastName,
 			Nickname:  userInput.Nickname,
@@ -105,8 +103,8 @@ func TestUser_update(t *testing.T) {
 
 		rec := httptest.NewRecorder()
 		gctx, _ := gin.CreateTestContext(rec)
-		gctx.Request = httptest.NewRequest(http.MethodPut, "/user/"+userInput.ID.String(), bytes.NewReader(userInputBytes))
-		gctx.Params = gin.Params{gin.Param{Key: "id", Value: userInput.ID.String()}}
+		gctx.Request = httptest.NewRequest(http.MethodPut, "/user/"+updatedUser.ID.String(), bytes.NewReader(userInputBytes))
+		gctx.Params = gin.Params{gin.Param{Key: "id", Value: updatedUser.ID.String()}}
 
 		mockDomain := domain.MockContract{}
 		mockDomain.EXPECT().

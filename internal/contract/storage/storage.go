@@ -54,7 +54,6 @@ type User struct {
 
 // Extra field: Password.
 type UserInput struct {
-	ID        uuid.UUID `json:"id" db:"id"`
 	FirstName string    `json:"firstName" db:"first_name"`
 	LastName  string    `json:"lastName" db:"last_name"`
 	Nickname  string    `json:"nickname" db:"nickname"`

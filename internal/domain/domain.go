@@ -11,10 +11,6 @@ import (
 )
 
 func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*domain.User, error) {
-	if userInput.ID == uuid.Nil {
-		userInput.ID = uuid.New()
-	}
-
 	err := userInput.HashPassword()
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
