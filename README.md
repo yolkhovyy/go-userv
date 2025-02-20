@@ -254,7 +254,6 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
   * Returns health status of the User Service
 
 ### TODO
-* Postgres consistency
 * Integration tests
 * More unit tests
 * API annotaions and documentation
