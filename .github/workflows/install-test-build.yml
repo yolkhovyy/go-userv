@@ -24,20 +24,26 @@ jobs:
       - name: Run tests
         run: make test
 
-      - name: Generate coverage report
-        run: make coverage
-
-      - name: Build project
-        run: make build
-
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: resaults/unit-tests.xml
 
+      - name: Generate coverage report
+        run: make coverage
+
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/system.out
+
+      - name: Upload HTML Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coverage/system.html
+
+      - name: Build project
+        run: make build
