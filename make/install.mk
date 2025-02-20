@@ -23,5 +23,6 @@ install-git-hooks: ## Install git hooks
 	fi
 
 .PHONY: install-env ## Install .env
-	echo "🛠️ Installing .env"; \
+install-env:
+	@echo "🛠️ Installing .env"
 	@cp .env.local .env
