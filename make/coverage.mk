@@ -22,7 +22,7 @@ coverage: gocovmerge-check gocover-cobertura-check ## Make coverage report
 	@for file in coverage/*.cov; do \
 		bname=$$(basename $$file .cov); \
 		name=$$bname.out; \
-		cat $$file | grep -v -e "mock_" -v -e "test" > coverage/$$name; \
+		cat $$file | grep -v -e "mock_" -v -e "test" -v -e "pb.go" > coverage/$$name; \
 	done
 	@gocovmerge coverage/*.out > coverage/system.out
 	@go tool cover -html=coverage/system.out -o coverage/system.html
