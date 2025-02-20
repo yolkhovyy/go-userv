@@ -7,7 +7,7 @@ help: display-help ## Display this help
 all: install lint test coverage build run ## Install, lint, test, coverage, build and run the project
 
 .PHONY: install
-install: install-tools install-git-hooks install-env ## Install project
+install: install-env install-tools install-git-hooks ## Install project
 
 .PHONY: lint ## Lint the project
 lint: lint-go
