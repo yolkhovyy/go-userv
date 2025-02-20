@@ -220,14 +220,14 @@ In 2nd terminal
 ### Create, list, get, update, delete users
 In 3rd terminal:
 * REST
-```bash
-./scripts/create-users.sh
-./scripts/list-users.sh 
-./scripts/get-user.sh UUID 
-./scripts/update-user.sh UUID 
-./scripts/delete-user.sh UUID
-```
   * Use a UUID from the output of `list-users.sh`
+  ```bash
+  ./scripts/create-users.sh
+  ./scripts/list-users.sh 
+  ./scripts/get-user.sh UUID 
+  ./scripts/update-user.sh UUID 
+  ./scripts/delete-user.sh UUID
+  ```
 * [gRPC](./contract/proto/GRPC.md)
 * [GraphQL](./contract/graphql/GRAPHQL.md)
 
