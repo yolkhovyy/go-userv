@@ -1,3 +1,5 @@
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 ## Mocks:
 
 .PHONY: check-mockery
