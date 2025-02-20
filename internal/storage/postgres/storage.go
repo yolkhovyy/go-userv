@@ -6,6 +6,8 @@ import (
 
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
+	"github.com/rs/zerolog/log"
 	"github.com/yolkhovyy/user/internal/contract/storage"
 )
 
@@ -68,11 +70,30 @@ func (c *Controller) Get(ctx context.Context, userID uuid.UUID) (*storage.User, 
 	return &user, nil
 }
 
-func (c *Controller) List(ctx context.Context, page int, limit int, countryCode string) ([]storage.User, error) {
+func (c *Controller) List(ctx context.Context, page int, limit int, countryCode string) ([]storage.User, int, error) {
+	trx, err := c.txBeginRepeatableRead(ctx)
+	if err != nil {
+		return nil, 0, fmt.Errorf("list users transaction: %w", err)
+	}
+
+	defer func() {
+		if err := trx.Rollback(ctx); err != nil {
+			log.Error().Err(fmt.Errorf("rollback transaction: %w", err)).Msg("list users")
+		}
+	}()
+
+	var count int
+
+	query := `SELECT COUNT(*) FROM users`
+
+	if err := pgxscan.Get(ctx, trx, &count, query); err != nil {
+		return nil, 0, fmt.Errorf("count users: %w", err)
+	}
+
 	var args []any
 
 	offset := (page - 1) * limit
-	query := `SELECT id, first_name, last_name, nickname, email, country, created_at, updated_at FROM users `
+	query = `SELECT id, first_name, last_name, nickname, email, country, created_at, updated_at FROM users `
 
 	if countryCode != "" {
 		args = append(args, countryCode, limit, offset)
@@ -83,11 +104,11 @@ func (c *Controller) List(ctx context.Context, page int, limit int, countryCode 
 	}
 
 	var result []storage.User
-	if err := pgxscan.Select(ctx, c.pool, &result, query, args...); err != nil {
-		return nil, fmt.Errorf("get users: %w", err)
+	if err := pgxscan.Select(ctx, trx, &result, query, args...); err != nil {
+		return nil, 0, fmt.Errorf("list users: %w", err)
 	}
 
-	return result, nil
+	return result, count, nil
 }
 
 func (c *Controller) Delete(ctx context.Context, userID uuid.UUID) error {
@@ -101,14 +122,21 @@ func (c *Controller) Delete(ctx context.Context, userID uuid.UUID) error {
 	return nil
 }
 
-func (c *Controller) Count(ctx context.Context) (int, error) {
-	var count int
-
-	query := `SELECT COUNT(*) FROM users`
-
-	if err := pgxscan.Get(ctx, c.pool, &count, query); err != nil {
-		return 0, fmt.Errorf("count users: %w", err)
+//nolint:ireturn
+func (c *Controller) txBeginRepeatableRead(ctx context.Context) (pgx.Tx, error) {
+	trx, err := c.pool.Begin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("begin transaction: %w", err)
 	}
 
-	return count, nil
+	_, err = trx.Exec(ctx, "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+	if err != nil {
+		if rbErr := trx.Rollback(ctx); rbErr != nil {
+			return nil, fmt.Errorf("set isolation level: %w, rollback transaction: %w", err, rbErr)
+		}
+
+		return nil, fmt.Errorf("set isolation level: %w", err)
+	}
+
+	return trx, nil
 }

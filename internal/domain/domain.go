@@ -54,20 +54,15 @@ func (u Controller) Get(ctx context.Context, userID uuid.UUID) (*domain.User, er
 		return nil, fmt.Errorf("get user: %w", err)
 	}
 
-	gotUser := domain.User(*user)
+	domainUser := domain.User(*user)
 
-	log.Info().Msgf("retrieved user %+v", gotUser)
+	log.Info().Msgf("retrieved user %+v", domainUser)
 
-	return &gotUser, nil
+	return &domainUser, nil
 }
 
 func (u Controller) List(ctx context.Context, page, limit int, countryCode string) (*domain.Users, error) {
-	count, err := u.storage.Count(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("count users: %w", err)
-	}
-
-	users, err := u.storage.List(ctx, page, limit, countryCode)
+	users, count, err := u.storage.List(ctx, page, limit, countryCode)
 	if err != nil {
 		return nil, fmt.Errorf("get users: %w", err)
 	}

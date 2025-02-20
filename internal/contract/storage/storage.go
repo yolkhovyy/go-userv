@@ -10,7 +10,6 @@ import (
 
 type Contract interface {
 	CRUD
-	Counter
 	io.Closer
 }
 
@@ -27,7 +26,7 @@ type Creator interface {
 
 type Reader interface {
 	Get(ctx context.Context, userID uuid.UUID) (*User, error)
-	List(ctx context.Context, page, limit int, countryCode string) ([]User, error)
+	List(ctx context.Context, page, limit int, countryCode string) ([]User, int, error)
 }
 
 type Updater interface {
@@ -36,9 +35,6 @@ type Updater interface {
 
 type Deleter interface {
 	Delete(ctx context.Context, userID uuid.UUID) error
-}
-type Counter interface {
-	Count(ctx context.Context) (int, error)
 }
 
 type User struct {
