@@ -10,12 +10,12 @@ Provides:
   * GET /api/v1/users?page=1&limit=10&country=GB
   * PUT /api/v1/user/:id with JSON body
   * DELETE /api/v1/user/:id
-* gRPC API:
-  * Create(UserCreate)
-  * Get(UserID)
-  * List(ListRequest)
-  * Update(UserUpdate)
-  * Delete(UserID)
+* gRPC/GraphQL API:
+  * Create
+  * User
+  * Users
+  * Update
+  * Delete
 * User change notifications via Kafka
 * Health check
   * GET /health
@@ -218,7 +218,8 @@ In 2nd terminal
 * This allows to observe user changes
 
 ### Create, list, get, update, delete users
-In 3rd terminal
+In 3rd terminal:
+* REST
 ```bash
 ./scripts/create-users.sh
 ./scripts/list-users.sh 
@@ -226,7 +227,9 @@ In 3rd terminal
 ./scripts/update-user.sh UUID 
 ./scripts/delete-user.sh UUID
 ```
-* Use a UUID from the output of `list-users.sh`
+  * Use a UUID from the output of `list-users.sh`
+* [gRPC](./contract/proto/GRPC.md)
+* [GraphQL](./contract/graphql/GRAPHQL.md)
 
 ### Stop
 ```bash
@@ -253,9 +256,8 @@ docker volume rm go-userv_user-data
 * Returns health status of the User Service
 
 ### TODO
-* Testing
-  * More unit tests
-  * Implement integration tests
+* Postgres consistency
+* Integration tests
+* More unit tests
 * API annotaions and documentation
 * Telemetry
-* Postgres consistency
