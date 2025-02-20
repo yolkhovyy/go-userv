@@ -169,7 +169,7 @@ func TestUser_get(t *testing.T) {
 
 func TestUser_list(t *testing.T) {
 	t.Parallel()
-	t.Run("Get user", func(t *testing.T) {
+	t.Run("List users", func(t *testing.T) {
 		t.Parallel()
 		gin.SetMode(gin.TestMode)
 
@@ -233,7 +233,7 @@ func TestUser_list(t *testing.T) {
 
 func TestUser_delete(t *testing.T) {
 	t.Parallel()
-	t.Run("Get user", func(t *testing.T) {
+	t.Run("Delete user", func(t *testing.T) {
 		t.Parallel()
 		gin.SetMode(gin.TestMode)
 
