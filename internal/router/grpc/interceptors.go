@@ -2,75 +2,47 @@ package grpc
 
 import (
 	"context"
-	"time"
+	"fmt"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 )
 
 func Interceptors() []grpc.ServerOption {
+	logOpts := []logging.Option{
+		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+	}
+
 	return []grpc.ServerOption{
-		grpc.UnaryInterceptor(logUnary),
-		grpc.StreamInterceptor(logStream),
+		grpc.ChainUnaryInterceptor(recovery.UnaryServerInterceptor(panicRecovery)),
+		grpc.ChainStreamInterceptor(recovery.StreamServerInterceptor(panicRecovery)),
+		grpc.ChainUnaryInterceptor(logging.UnaryServerInterceptor(zerologInterceptor(log.Logger), logOpts...)),
+		grpc.ChainStreamInterceptor(logging.StreamServerInterceptor(zerologInterceptor(log.Logger), logOpts...)),
 	}
 }
 
-func logUnary(
-	ctx context.Context,
-	req any,
-	info *grpc.UnaryServerInfo,
-	handler grpc.UnaryHandler,
-) (any, error) {
-	start := time.Now()
+//nolint:gochecknoglobals
+var panicRecovery = recovery.WithRecoveryHandler(func(p any) error {
+	return fmt.Errorf("%v recovered from panic: %w", p, ErrPanic)
+})
 
-	log.Info().
-		Str("fullMethod", info.FullMethod).
-		Msg("grpc request begin")
-
-	resp, err := handler(ctx, req)
-	if err != nil {
-		log.Error().Err(err).
-			Str("fullMethod", info.FullMethod).
-			Dur("duration(ms)", time.Since(start).Round(time.Millisecond)).
-			Msg("grpc request end")
-
-		return resp, err
-	}
-
-	log.Info().
-		Str("fullMethod", info.FullMethod).
-		Dur("duration(ms)", time.Since(start).Round(time.Millisecond)).
-		Msg("grpc request end")
-
-	return resp, nil
-}
-
-func logStream(
-	srv interface{},
-	stream grpc.ServerStream,
-	info *grpc.StreamServerInfo,
-	handler grpc.StreamHandler,
-) error {
-	start := time.Now()
-
-	log.Info().
-		Str("fullMethod", info.FullMethod).
-		Msg("grpc request begin")
-
-	err := handler(srv, stream)
-	if err != nil {
-		log.Error().Err(err).
-			Str("fullMethod", info.FullMethod).
-			Dur("duration(ms)", time.Since(start).Round(time.Millisecond)).
-			Msg("grpc request")
-
-		return err
-	}
-
-	log.Info().
-		Str("fullMethod", info.FullMethod).
-		Dur("duration(ms)", time.Since(start).Round(time.Millisecond)).
-		Msg("grpc request end")
-
-	return nil
+//nolint:ireturn
+func zerologInterceptor(logger zerolog.Logger) logging.Logger {
+	return logging.LoggerFunc(func(_ context.Context, level logging.Level, msg string, fields ...any) {
+		switch level {
+		case logging.LevelDebug:
+			logger.Debug().Fields(fields).Msg(msg)
+		case logging.LevelInfo:
+			logger.Info().Fields(fields).Msg(msg)
+		case logging.LevelWarn:
+			logger.Warn().Fields(fields).Msg(msg)
+		case logging.LevelError:
+			logger.Error().Fields(fields).Msg(msg)
+		default:
+			logger.Trace().Fields(fields).Msg(msg)
+		}
+	})
 }

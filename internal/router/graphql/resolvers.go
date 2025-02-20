@@ -15,7 +15,7 @@ var (
 )
 
 func (c *Controller) user() graphql.FieldResolveFn {
-	return func(params graphql.ResolveParams) (any, error) {
+	return withLogging(func(params graphql.ResolveParams) (any, error) {
 		var input inputMap = params.Args
 
 		userID, err := input.uuidValue("id")
@@ -29,11 +29,11 @@ func (c *Controller) user() graphql.FieldResolveFn {
 		}
 
 		return user, nil
-	}
+	})
 }
 
 func (c *Controller) users() graphql.FieldResolveFn {
-	return func(params graphql.ResolveParams) (any, error) {
+	return withLogging(func(params graphql.ResolveParams) (any, error) {
 		const (
 			defaultPage  = 1
 			defaultLimit = 10
@@ -62,11 +62,11 @@ func (c *Controller) users() graphql.FieldResolveFn {
 		}
 
 		return list, nil
-	}
+	})
 }
 
 func (c *Controller) create() graphql.FieldResolveFn {
-	return func(params graphql.ResolveParams) (any, error) {
+	return withLogging(func(params graphql.ResolveParams) (any, error) {
 		user, err := userInput(params)
 		if err != nil {
 			return nil, fmt.Errorf("create user resolver: %w", err)
@@ -78,11 +78,11 @@ func (c *Controller) create() graphql.FieldResolveFn {
 		}
 
 		return createdUser, nil
-	}
+	})
 }
 
 func (c *Controller) update() graphql.FieldResolveFn {
-	return func(params graphql.ResolveParams) (any, error) {
+	return withLogging(func(params graphql.ResolveParams) (any, error) {
 		user, err := userInput(params)
 		if err != nil {
 			return nil, fmt.Errorf("update user input: %w", err)
@@ -94,11 +94,11 @@ func (c *Controller) update() graphql.FieldResolveFn {
 		}
 
 		return updatedUser, nil
-	}
+	})
 }
 
 func (c *Controller) delete() graphql.FieldResolveFn {
-	return func(params graphql.ResolveParams) (any, error) {
+	return withLogging(func(params graphql.ResolveParams) (any, error) {
 		var input inputMap = params.Args
 
 		userID, err := input.uuidValue("id")
@@ -111,7 +111,7 @@ func (c *Controller) delete() graphql.FieldResolveFn {
 		}
 
 		return true, nil
-	}
+	})
 }
 
 func userInput(params graphql.ResolveParams) (*domain.UserInput, error) {

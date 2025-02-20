@@ -56,7 +56,7 @@ func (u Controller) Get(ctx context.Context, userID uuid.UUID) (*domain.User, er
 
 	gotUser := domain.User(*user)
 
-	log.Info().Msgf("got user %+v", gotUser)
+	log.Info().Msgf("retrieved user %+v", gotUser)
 
 	return &gotUser, nil
 }
@@ -73,9 +73,9 @@ func (u Controller) List(ctx context.Context, page, limit int, countryCode strin
 	}
 
 	if len(users) > 0 {
-		log.Info().Msgf("got %d users %+v...", len(users), users[0])
+		log.Info().Msgf("retrieved %d users %+v...", len(users), users[0])
 	} else {
-		log.Info().Msg("got no users")
+		log.Info().Msg("retrieved no users")
 	}
 
 	nextPage := page + 1
