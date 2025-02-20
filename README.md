@@ -1,6 +1,6 @@
 # User Management Services
 
-This is a Go Microservice Playground project, implementing User Management Services with REST and gRPC APIs, PostgreSQL storage, and Kafka notifications.
+This is a Go Microservice Playground project, implementing User Management Services with REST, gRPC and GraphQL APIs, PostgreSQL storage, and Kafka notifications.
 
 Provides:
 
@@ -135,125 +135,123 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
 * [docker-compose.yml](./docker-compose.yml)
 * [Dockerfile](./cmd/user/Dockerfile)
 
-### Make targets
+### Make
 
-#### Display help
-```bash
-make help
-```
+* Display help
+  ```bash
+  make help
+  ```
 
-#### All - install, lint, test, coverage, build, run
-```bash
-make all
-```
+* All - install, lint, test, coverage, build, run
+  ```bash
+  make all
+  ```
+
 ### Step by step
 
-#### Install project
-```bash
-make install
-```
-* This installs required [tools and Git hooks](./make/install.mk).
+* Install project
+  ```bash
+  make install
+  ```
+  * This installs required [tools and Git hooks](./make/install.mk).
 
-#### Lint
-```bash
-make lint
-```
-* Currently limited to Go files only, mocks_*.go excluded.
+* Lint
+  ```bash
+  make lint
+  ```
+  * Currently limited to Go files only, mocks_*.go excluded.
 
-#### Test
-```bash
-make test
-```
-* Currently limited to [router unit tests](./internal/gin/router/router_test.go)
-* Generates test [results](./results/unit-tests.xml) in JUnit XML Format, ready to be consumed by CI/CD pipelines, e.g. Jenkins, GitLab CI/CD, CircleCI, Azure DevOps, etc.
+* Test
+  ```bash
+  make test
+  ```
+  * Currently limited to [router unit tests](./internal/gin/router/router_test.go)
+  * Generates test [results](./results/unit-tests.xml) in JUnit XML Format, ready to be consumed by CI/CD pipelines, e.g. Jenkins, GitLab CI/CD, CircleCI, Azure DevOps, etc.
 
-#### Make coverage report
-```bash
-make coverage
-```
-* This generates a coverage [report](./coverage/system.html) in HTML format, try to open it in a browser
+* Make coverage report
+  ```bash
+  make coverage
+  ```
+  * This generates a coverage [report](./coverage/system.html) in HTML format, try to open it in a browser
 
-#### Build docker image
+* Build docker images
+  ```bash
+  make build
+  ```
 
-```bash
-make build
-```
-
-#### Run all
-
-```bash
-make run
-```
-* Runs User Service and 3rd party dependency services in Docker containers
+* Run all
+  ```bash
+  make run
+  ```
+  * Runs User Service and 3rd party dependency services in Docker containers
 
 ### Logs
 
-#### All Logs
-```bash
-docker compose logs -f
-```
-
-#### Selective Logs
-```bash
-docker compose logs -f user-rest
-```
-```bash
-docker compose logs -f user-notifier kafka
-```
-```bash
-docker compose logs -f user-grpc postgres
-```
-
-### Start dependency services only
-```bash
-make dc-up-dependencies
-```
-* Now you can run and debug the `user-*` service in vscode
-
-### Kafka consumer
-In 2nd terminal
-```bash
-./scripts/kafka-consumer.sh
-```
-* This allows to observe user changes
-
-### Create, list, get, update, delete users
-In 3rd terminal:
-* REST
-  * Use a UUID from the output of `list-users.sh`
+* All Logs
   ```bash
-  ./scripts/create-users.sh
-  ./scripts/list-users.sh 
-  ./scripts/get-user.sh UUID 
-  ./scripts/update-user.sh UUID 
-  ./scripts/delete-user.sh UUID
+  docker compose logs -f
   ```
-* [gRPC](./contract/proto/GRPC.md)
-* [GraphQL](./contract/graphql/GRAPHQL.md)
 
-### Stop
-```bash
-make stop
-```
-* Stops all running services
+* Selective Logs
+  ```bash
+  docker compose logs -f user-rest
+  ```
+  ```bash
+  docker compose logs -f user-notifier kafka
+  ```
+  ```bash
+  docker compose logs -f user-grpc postgres
+  ```
 
-### Clean
-```bash
-make clean
-```
-* Stops running services, removes all containers, mocks and generated folders
+* Start dependency services only
+  ```bash
+  make dc-up-dependencies
+  ```
+  * Now you can run and debug the `user-*` service in vscode
 
-### Remove docker volume
-```bash
-docker volume rm go-userv_user-data
-```
-* Removes the docker volume with user data in PostgreSQL database
+* Kafka consumer
+  In 2nd terminal
+  ```bash
+  ./scripts/kafka-consumer.sh
+  ```
+  * This allows to observe user changes
 
-### Health check
-```bash
-./scripts/health-check.sh
-```
-* Returns health status of the User Service
+* Create, list, get, update, delete users
+  In 3rd terminal:
+  * REST - use UUID from the output of `list-users.sh`
+    ```bash
+    ./scripts/create-users.sh
+    ./scripts/list-users.sh 
+    ./scripts/get-user.sh UUID 
+    ./scripts/update-user.sh UUID 
+    ./scripts/delete-user.sh UUID
+    ```
+  * [gRPC](./contract/proto/GRPC.md)
+  * [GraphQL](./contract/graphql/GRAPHQL.md)
+
+* Stop
+  ```bash
+  make stop
+  ```
+  * Stops all running services
+
+* Clean
+  ```bash
+  make clean
+  ```
+  * Stops running services, removes all containers, mocks and generated folders
+
+* Remove docker volume
+  ```bash
+  docker volume rm go-userv_user-data
+  ```
+  * Removes the docker volume with user data in PostgreSQL database
+
+* Health check
+  ```bash
+  ./scripts/health-check.sh
+  ```
+  * Returns health status of the User Service
 
 ### TODO
 * Postgres consistency

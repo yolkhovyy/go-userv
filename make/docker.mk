@@ -1,3 +1,6 @@
+export COMPOSE_DOCKER_CLI_BUILD = 1
+export DOCKER_BUILDKIT = 1
+
 DC = docker compose
 export DEPENDENCIES = postgres zookeeper kafka kafka-initializer
 export SERVICES = $(filter-out ${DEPENDENCIES}, $(shell ${DC} config --services))
@@ -20,7 +23,7 @@ dc-build-up: lint dc-up-dependencies ## Build Docker images and start the servic
 	@${DC} up --build --detach --force-recreate --remove-orphans ${SERVICES}
 
 .PHONY: dc-up
-dc-up: dc-up-dependencies ## Start aproject services in Docker containers
+dc-up: dc-up-dependencies ## Start project services in Docker containers
 	@echo "🐳 Starting project services in Docker containers"
 	@${DC} up --detach --remove-orphans ${SERVICES}
 
