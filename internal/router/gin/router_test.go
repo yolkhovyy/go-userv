@@ -180,8 +180,8 @@ func TestUser_list(t *testing.T) {
 			country  = "GB"
 		)
 
-		listUsers := domain.Users(
-			storage.Users{
+		listUsers := domain.UserList(
+			storage.UserList{
 				Users:      make([]storage.User, 0, numUsers),
 				TotalCount: numUsers,
 				NextPage:   -1,

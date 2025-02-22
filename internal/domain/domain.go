@@ -61,7 +61,7 @@ func (u Controller) Get(ctx context.Context, userID uuid.UUID) (*domain.User, er
 	return &domainUser, nil
 }
 
-func (u Controller) List(ctx context.Context, page, limit int, countryCode string) (*domain.Users, error) {
+func (u Controller) List(ctx context.Context, page, limit int, countryCode string) (*domain.UserList, error) {
 	users, count, err := u.storage.List(ctx, page, limit, countryCode)
 	if err != nil {
 		return nil, fmt.Errorf("get users: %w", err)
@@ -78,7 +78,7 @@ func (u Controller) List(ctx context.Context, page, limit int, countryCode strin
 		nextPage = -1
 	}
 
-	listUsers := domain.Users(storage.Users{
+	listUsers := domain.UserList(storage.UserList{
 		Users:      users,
 		TotalCount: count,
 		NextPage:   nextPage,

@@ -256,5 +256,6 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
 ### TODO
 * Integration tests
 * More unit tests
+* Snyk
 * API annotaions and documentation
 * Telemetry

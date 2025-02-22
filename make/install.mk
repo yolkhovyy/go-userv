@@ -18,8 +18,8 @@ install-tools: ## Install required project tools
 install-git-hooks: ## Install git hooks
 	@if [ -d ".git/hooks" ]; then \
 		echo "🛠️ Installing git hooks"; \
-		cp make/pre-commit.sh .git/hooks/pre-commit; \
-		cp make/pre-push.sh .git/hooks/pre-push; \
+		cp make/git/pre-commit.sh .git/hooks/pre-commit; \
+		cp make/git/pre-push.sh .git/hooks/pre-push; \
 	fi
 
 .PHONY: install-env ## Install .env

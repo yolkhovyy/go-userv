@@ -10,7 +10,7 @@ type User domain.User
 
 type UserInput domain.UserInput
 
-type Users domain.Users
+type UserList domain.UserList
 
 func UserFromDomain(user domain.User) User {
 	return User(user)
@@ -20,6 +20,6 @@ func UserInputToDomain(userInput UserInput) domain.UserInput {
 	return domain.UserInput(userInput)
 }
 
-func UsersFromDomain(users domain.Users) Users {
-	return Users(users)
+func UsersFromDomain(users domain.UserList) UserList {
+	return UserList(users)
 }

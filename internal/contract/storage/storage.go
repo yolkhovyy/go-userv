@@ -60,7 +60,7 @@ type UserInput struct {
 	Password  string    `json:"password,omitempty" db:"password_hash"`
 }
 
-type Users struct {
+type UserList struct {
 	Users      []User `json:"users,omitempty"`
 	TotalCount int    `json:"totalCount"`
 	NextPage   int    `json:"nextPage"`

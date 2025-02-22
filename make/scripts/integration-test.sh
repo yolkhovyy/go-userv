@@ -2,8 +2,8 @@
 
 SERVICES=("user-graphql" "user-grpc" "user-notifier" "user-rest")
 
-echo "⚙️ Running tests"
-go test -v -count=1 --tags=integration_tests ./test/...
+echo "⚙️ Running integration tests"
+go test -v -count=1 --tags=integration_tests ./test/integration/...
 
 echo "⚙️ Exporting coverage profiles"
 mkdir -p coverage

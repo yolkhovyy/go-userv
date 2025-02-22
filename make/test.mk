@@ -11,5 +11,5 @@ unit-test: generate-mocks ## Run unit tests
 integration-test: export BUILD_TARGET = test
 integration-test: ## Run integration tests
 	@$(MAKE) dc-build-up; sleep 7
-	@./test/integration.sh
+	@./make/scripts/integration-test.sh
 	@$(MAKE) dc-stop

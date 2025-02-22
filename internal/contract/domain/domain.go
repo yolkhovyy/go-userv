@@ -28,7 +28,7 @@ type Creator interface {
 
 type Reader interface {
 	Get(ctx context.Context, userID uuid.UUID) (*User, error)
-	List(ctx context.Context, page, limit int, countryCode string) (*Users, error)
+	List(ctx context.Context, page, limit int, countryCode string) (*UserList, error)
 }
 
 type Updater interface {
@@ -45,7 +45,7 @@ type User storage.User
 
 type UserInput storage.UserInput
 
-type Users storage.Users
+type UserList storage.UserList
 
 func UserFromStorage(user storage.User) User {
 	return User(user)
@@ -55,8 +55,8 @@ func UserInputToStorage(userInput UserInput) storage.UserInput {
 	return storage.UserInput(userInput)
 }
 
-func UsersFromStorage(users storage.Users) Users {
-	return Users(users)
+func UsersFromStorage(users storage.UserList) UserList {
+	return UserList(users)
 }
 
 func (u *UserInput) HashPassword() error {
