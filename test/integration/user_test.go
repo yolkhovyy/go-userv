@@ -15,19 +15,22 @@ import (
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
-type testCaseEdgar struct {
+type testCase struct {
+	testFunc func(t *testing.T, tcase testCase)
 	numUsers int
-}
-
-var testCases = map[string]testCaseEdgar{
-	"test_case_one": {numUsers: 100},
-	"test_case_two": {},
+	pageSize int
+	country  string
 }
 
 type TestSuite struct {
 	suite.Suite
 	client *userrest.Client
+	cases  map[string]testCase
 }
+
+// testCases = map[string]testCase{
+// 	"Create": {testFunc: ,numUsers: 100},
+// }
 
 func TestSuiteRun(t *testing.T) {
 	suite.Run(t, new(TestSuite))
@@ -35,7 +38,10 @@ func TestSuiteRun(t *testing.T) {
 
 func (s *TestSuite) SetupSuite() {
 	fmt.Println("SETUP SUITE")
-	s.client = userrest.NewClient("http://localhost:8080") // Adjust the URL as needed
+	s.client = userrest.NewClient("http://localhost:8080")
+	s.cases = map[string]testCase{
+		"Create": {testFunc: s.createUsers, numUsers: 100},
+	}
 }
 
 func (s *TestSuite) TearDownSuite() {
@@ -52,21 +58,16 @@ func (s *TestSuite) TearDownTest() {
 
 func (s *TestSuite) TestOne() {
 	s.T().Parallel()
-	for tcn, tc := range testCases {
+	for tcn, tc := range s.cases {
 		s.T().Run(tcn, func(t *testing.T) {
 			t.Parallel()
-			if tcn == "test_case_one" {
-				s.createUsers(t, tc.numUsers)
-			} else {
-				assert.True(t, true)
-				require.True(t, true)
-			}
+			tc.testFunc(t, tc)
 		})
 	}
 }
 
-func (s *TestSuite) createUsers(t *testing.T, numUsers int) {
-	for i := 0; i < numUsers; i++ {
+func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
+	for i := 0; i < tcase.numUsers; i++ {
 		userID := uuid.New()
 		userInput := domain.UserInput{
 			FirstName: fmt.Sprintf("FirstName%d", i),
@@ -90,21 +91,15 @@ func (s *TestSuite) createUsers(t *testing.T, numUsers int) {
 		assert.Equal(t, userInput.Nickname, createdUser.Nickname)
 		assert.Equal(t, userInput.Email, createdUser.Email)
 		assert.Equal(t, userInput.Country, createdUser.Country)
+		assert.NotZero(t, createdUser.CreatedAt)
+		assert.NotZero(t, createdUser.UpdatedAt)
+		assert.Equal(t, createdUser.CreatedAt, createdUser.UpdatedAt)
 	}
 
-	// Verify that we can list all created users
-	// users, err := s.client.List(context.Background(), 1, numUsers, "")
-	// require.NoError(t, err)
-	// assert.Equal(t, numUsers, len(users.Users))
-}
-
-func (s *TestSuite) TestTwo() {
-	s.T().Parallel()
-	for tcn := range testCases {
-		s.T().Run(tcn, func(t *testing.T) {
-			t.Parallel()
-			assert.True(t, true)
-			require.True(t, true)
-		})
-	}
+	// Verify that we can list all created listUsers.
+	listUsers, err := s.client.List(context.Background(), 1, tcase.numUsers+1, tcase.country)
+	require.NoError(t, err)
+	assert.Equal(t, tcase.numUsers, listUsers.TotalCount)
+	assert.Equal(t, -1, listUsers.NextPage)
+	assert.Equal(t, tcase.numUsers, len(listUsers.Users))
 }

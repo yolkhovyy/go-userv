@@ -96,7 +96,7 @@ func (c *Client) List(ctx context.Context, page, limit int, countryCode string) 
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
-		fmt.Sprintf("%s/api/v1/user?%s", c.baseURL, query.Encode()), nil)
+		fmt.Sprintf("%s/api/v1/users?%s", c.baseURL, query.Encode()), nil)
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
 	}
