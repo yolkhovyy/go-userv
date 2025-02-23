@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-func (u *UserInput) ValidateOnCreate() error {
+func (u *UserInput) Validate() error {
 	if u.FirstName == "" {
 		return fmt.Errorf("invalid: %w %s", ErrFirstName, u.FirstName)
 	}
@@ -33,7 +33,7 @@ func (u *UserInput) ValidateOnCreate() error {
 	return nil
 }
 
-func (u *UserInput) ValidateOnUpdate() error {
+func (u *UserUpdate) Validate() error {
 	if u.Email != "" {
 		if err := ValidateEmail(u.Email); err != nil {
 			return fmt.Errorf("invalid: %w", err)

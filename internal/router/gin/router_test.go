@@ -76,8 +76,9 @@ func TestUser_update(t *testing.T) {
 		t.Parallel()
 		gin.SetMode(gin.TestMode)
 
-		userInput := domain.UserInput(
-			storage.UserInput{
+		userUpdate := domain.UserUpdate(
+			storage.UserUpdate{
+				ID:        uuid.New(),
 				FirstName: "John",
 				LastName:  "Doe",
 				Nickname:  "john.doe",
@@ -87,28 +88,28 @@ func TestUser_update(t *testing.T) {
 			},
 		)
 
-		userInputBytes, err := json.Marshal(userInput)
+		userUpdateBytes, err := json.Marshal(userUpdate)
 		require.NoError(t, err)
 
 		updatedUser := domain.User{
-			ID:        uuid.New(),
-			FirstName: userInput.FirstName,
-			LastName:  userInput.LastName,
-			Nickname:  userInput.Nickname,
-			Email:     userInput.Email,
-			Country:   userInput.Country,
+			ID:        userUpdate.ID,
+			FirstName: userUpdate.FirstName,
+			LastName:  userUpdate.LastName,
+			Nickname:  userUpdate.Nickname,
+			Email:     userUpdate.Email,
+			Country:   userUpdate.Country,
 		}
 		updatedUserBytes, err := json.Marshal(updatedUser)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
 		gctx, _ := gin.CreateTestContext(rec)
-		gctx.Request = httptest.NewRequest(http.MethodPut, "/user/"+updatedUser.ID.String(), bytes.NewReader(userInputBytes))
+		gctx.Request = httptest.NewRequest(http.MethodPut, "/user/"+updatedUser.ID.String(), bytes.NewReader(userUpdateBytes))
 		gctx.Params = gin.Params{gin.Param{Key: "id", Value: updatedUser.ID.String()}}
 
 		mockDomain := domain.MockContract{}
 		mockDomain.EXPECT().
-			Update(gctx.Request.Context(), userInput).
+			Update(gctx.Request.Context(), userUpdate).
 			Return(&updatedUser, nil)
 
 		router := Controller{
@@ -241,21 +242,22 @@ func TestUser_delete(t *testing.T) {
 		rec := httptest.NewRecorder()
 
 		gctx, _ := gin.CreateTestContext(rec)
-		gctx.Request = httptest.NewRequest(http.MethodGet, "/user/"+userID.String(), nil)
+		gctx.Request = httptest.NewRequest(http.MethodDelete, "/user/"+userID.String(), nil)
 		gctx.Params = gin.Params{gin.Param{Key: "id", Value: userID.String()}}
 
 		mockDomain := domain.MockContract{}
 		mockDomain.EXPECT().Delete(gctx.Request.Context(), userID).Return(nil)
 
-		router := Controller{
+		controller := Controller{
 			domain: &mockDomain,
 		}
 
-		router.delete(gctx)
+		controller.delete(gctx)
+		// FIXME: It must return http.StatusNoContent.
 		assert.Equal(t, http.StatusOK, rec.Code)
 
 		body, err := io.ReadAll(rec.Body)
 		require.NoError(t, err)
-		assert.JSONEq(t, string(`{"message":"User deleted"}`), string(body))
+		assert.Empty(t, body)
 	})
 }

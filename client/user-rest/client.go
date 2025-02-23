@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/yolkhovyy/user/contract/dto"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
@@ -111,23 +112,25 @@ func (c *Client) List(ctx context.Context, page, limit int, countryCode string) 
 		return nil, fmt.Errorf("list: %w %d", ErrUnexpectedStatusCode, resp.StatusCode)
 	}
 
-	var users domain.UserList
-	if err := json.NewDecoder(resp.Body).Decode(&users); err != nil {
+	var userList dto.UserList
+	if err := json.NewDecoder(resp.Body).Decode(&userList); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 
-	return &users, nil
+	domainUserList := dto.UserListToDomain(userList)
+
+	return &domainUserList, nil
 }
 
 // Updates an existing user.
-func (c *Client) Update(ctx context.Context, userID uuid.UUID, user domain.UserInput) (*domain.User, error) {
+func (c *Client) Update(ctx context.Context, user domain.UserUpdate) (*domain.User, error) {
 	body, err := json.Marshal(user)
 	if err != nil {
 		return nil, fmt.Errorf("marshal user input: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPut,
-		fmt.Sprintf("%s/api/v1/user/%s", c.baseURL, userID), bytes.NewBuffer(body))
+		fmt.Sprintf("%s/api/v1/user/%s", c.baseURL, user.ID.String()), bytes.NewBuffer(body))
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
 	}

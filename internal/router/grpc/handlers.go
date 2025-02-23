@@ -23,7 +23,7 @@ func (c *Controller) Create(ctx context.Context, req *userpb.UserInput) (*userpb
 		Password:  req.GetPassword(),
 	}
 
-	if err := userInput.ValidateOnCreate(); err != nil {
+	if err := userInput.Validate(); err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
 	}
 
@@ -77,8 +77,18 @@ func (c *Controller) List(ctx context.Context, req *userpb.ListRequest) (*userpb
 	}, nil
 }
 
-func (c *Controller) Update(ctx context.Context, req *userpb.UserInput) (*userpb.User, error) {
-	userInput := dto.UserInput{
+func (c *Controller) Update(ctx context.Context, req *userpb.UserUpdate) (*userpb.User, error) {
+	var err error
+
+	var userID uuid.UUID
+
+	userID, err = uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, fmt.Errorf("user id: %w", err)
+	}
+
+	userUpdate := dto.UserUpdate{
+		ID:        userID,
 		FirstName: req.GetFirstName(),
 		LastName:  req.GetLastName(),
 		Nickname:  req.GetNickname(),
@@ -87,11 +97,11 @@ func (c *Controller) Update(ctx context.Context, req *userpb.UserInput) (*userpb
 		Password:  req.GetPassword(),
 	}
 
-	if err := userInput.ValidateOnUpdate(); err != nil {
+	if err := userUpdate.Validate(); err != nil {
 		return nil, fmt.Errorf("update user: %w", err)
 	}
 
-	updatedUser, err := c.domain.Update(ctx, dto.UserInputToDomain(userInput))
+	updatedUser, err := c.domain.Update(ctx, dto.UserUpdateToDomain(userUpdate))
 	if err != nil {
 		return nil, fmt.Errorf("update user: %w", err)
 	}

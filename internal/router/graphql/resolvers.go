@@ -83,7 +83,7 @@ func (c *Controller) create() graphql.FieldResolveFn {
 
 func (c *Controller) update() graphql.FieldResolveFn {
 	return withLogging(func(params graphql.ResolveParams) (any, error) {
-		user, err := userInput(params)
+		user, err := userUpdate(params)
 		if err != nil {
 			return nil, fmt.Errorf("update user input: %w", err)
 		}
@@ -114,7 +114,7 @@ func (c *Controller) delete() graphql.FieldResolveFn {
 	})
 }
 
-func userInput(params graphql.ResolveParams) (*domain.UserInput, error) {
+func foo(params graphql.ResolveParams) (inputMap, error) {
 	inputRaw, exists := params.Args["input"]
 	if !exists {
 		return nil, fmt.Errorf("user input raw: %w", ErrTypeAssertion)
@@ -125,7 +125,14 @@ func userInput(params graphql.ResolveParams) (*domain.UserInput, error) {
 		return nil, fmt.Errorf("user input map: %w", ErrTypeAssertion)
 	}
 
-	input := inputMap(inputAny)
+	return inputMap(inputAny), nil
+}
+
+func userInput(params graphql.ResolveParams) (*domain.UserInput, error) {
+	input, err := foo(params)
+	if err != nil {
+		return nil, fmt.Errorf("user input: %w", err)
+	}
 
 	userInput := &domain.UserInput{}
 
@@ -154,6 +161,48 @@ func userInput(params graphql.ResolveParams) (*domain.UserInput, error) {
 	}
 
 	return userInput, nil
+}
+
+func userUpdate(params graphql.ResolveParams) (*domain.UserUpdate, error) {
+	input, err := foo(params)
+	if err != nil {
+		return nil, fmt.Errorf("user update: %w", err)
+	}
+
+	userUpdate := &domain.UserUpdate{}
+
+	value, err := input.uuidValue("id")
+	if err != nil {
+		return nil, fmt.Errorf("user update %w", err)
+	}
+
+	userUpdate.ID = value
+
+	if value, ok := input.stringValue("firstName"); ok {
+		userUpdate.FirstName = value
+	}
+
+	if value, ok := input.stringValue("lastName"); ok {
+		userUpdate.LastName = value
+	}
+
+	if value, ok := input.stringValue("nickname"); ok {
+		userUpdate.Nickname = value
+	}
+
+	if value, ok := input.stringValue("email"); ok {
+		userUpdate.Email = value
+	}
+
+	if value, ok := input.stringValue("country"); ok {
+		userUpdate.Country = value
+	}
+
+	if value, ok := input.stringValue("password"); ok {
+		userUpdate.Password = value
+	}
+
+	return userUpdate, nil
 }
 
 type inputMap map[string]any

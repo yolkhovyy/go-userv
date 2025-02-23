@@ -32,7 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	Create(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error)
-	Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error)
+	Update(ctx context.Context, in *UserUpdate, opts ...grpc.CallOption) (*User, error)
 	Get(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*User, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*Users, error)
 	Delete(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -56,7 +56,7 @@ func (c *userServiceClient) Create(ctx context.Context, in *UserInput, opts ...g
 	return out, nil
 }
 
-func (c *userServiceClient) Update(ctx context.Context, in *UserInput, opts ...grpc.CallOption) (*User, error) {
+func (c *userServiceClient) Update(ctx context.Context, in *UserUpdate, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(User)
 	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, cOpts...)
@@ -101,7 +101,7 @@ func (c *userServiceClient) Delete(ctx context.Context, in *UserID, opts ...grpc
 // for forward compatibility.
 type UserServiceServer interface {
 	Create(context.Context, *UserInput) (*User, error)
-	Update(context.Context, *UserInput) (*User, error)
+	Update(context.Context, *UserUpdate) (*User, error)
 	Get(context.Context, *UserID) (*User, error)
 	List(context.Context, *ListRequest) (*Users, error)
 	Delete(context.Context, *UserID) (*empty.Empty, error)
@@ -118,7 +118,7 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) Create(context.Context, *UserInput) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedUserServiceServer) Update(context.Context, *UserInput) (*User, error) {
+func (UnimplementedUserServiceServer) Update(context.Context, *UserUpdate) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedUserServiceServer) Get(context.Context, *UserID) (*User, error) {
@@ -170,7 +170,7 @@ func _UserService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInput)
+	in := new(UserUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: UserService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Update(ctx, req.(*UserInput))
+		return srv.(UserServiceServer).Update(ctx, req.(*UserUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
