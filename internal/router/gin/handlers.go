@@ -21,7 +21,7 @@ func (c *Controller) create(gctx *gin.Context) {
 		return
 	}
 
-	if err := userInput.ValidateOnCreate(); err != nil {
+	if err := userInput.Validate(); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
 		return
@@ -38,20 +38,29 @@ func (c *Controller) create(gctx *gin.Context) {
 }
 
 func (c *Controller) update(gctx *gin.Context) {
-	var user dto.UserInput
+	userID, err := uuid.Parse(gctx.Param("id"))
+	if err != nil {
+		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+	}
+
+	var user dto.UserUpdate
 	if err := gctx.ShouldBindJSON(&user); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
 		return
 	}
 
-	if err := user.ValidateOnUpdate(); err != nil {
+	user.ID = userID
+
+	if err := user.Validate(); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
 		return
 	}
 
-	updatedUser, err := c.domain.Update(gctx.Request.Context(), dto.UserInputToDomain(user))
+	updatedUser, err := c.domain.Update(gctx.Request.Context(), dto.UserUpdateToDomain(user))
 	if err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -113,7 +122,7 @@ func (c *Controller) list(gctx *gin.Context) {
 		return
 	}
 
-	gctx.JSON(http.StatusOK, dto.UsersFromDomain(*list))
+	gctx.JSON(http.StatusOK, dto.UserListFromDomain(*list))
 }
 
 func (c *Controller) delete(gctx *gin.Context) {
@@ -131,5 +140,5 @@ func (c *Controller) delete(gctx *gin.Context) {
 		return
 	}
 
-	gctx.JSON(http.StatusOK, gin.H{"message": "User deleted"})
+	gctx.Status(http.StatusNoContent)
 }

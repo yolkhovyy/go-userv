@@ -30,7 +30,7 @@ type Reader interface {
 }
 
 type Updater interface {
-	Update(ctx context.Context, user UserInput) (*User, error)
+	Update(ctx context.Context, user UserUpdate) (*User, error)
 }
 
 type Deleter interface {
@@ -50,16 +50,23 @@ type User struct {
 
 // Extra field: Password.
 type UserInput struct {
+	FirstName string `json:"firstName" db:"first_name"`
+	LastName  string `json:"lastName" db:"last_name"`
+	Nickname  string `json:"nickname" db:"nickname"`
+	Email     string `json:"email" db:"email"`
+	Country   string `json:"country" db:"country"`
+	Password  string `json:"password,omitempty" db:"password_hash"`
+}
+
+type UserUpdate struct {
+	ID        uuid.UUID `json:"id" db:"id"`
 	FirstName string    `json:"firstName" db:"first_name"`
 	LastName  string    `json:"lastName" db:"last_name"`
 	Nickname  string    `json:"nickname" db:"nickname"`
 	Email     string    `json:"email" db:"email"`
 	Country   string    `json:"country" db:"country"`
-	CreatedAt time.Time `json:"createdAt" db:"created_at"`
-	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
 	Password  string    `json:"password,omitempty" db:"password_hash"`
 }
-
 type UserList struct {
 	Users      []User `json:"users,omitempty"`
 	TotalCount int    `json:"totalCount"`

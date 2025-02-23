@@ -11,10 +11,12 @@ import (
 )
 
 func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*domain.User, error) {
-	err := userInput.HashPassword()
+	hashedPassword, err := domain.HashPassword(userInput.Password)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
 	}
+
+	userInput.Password = hashedPassword
 
 	user, err := u.storage.Create(ctx, domain.UserInputToStorage(userInput))
 	if err != nil {
@@ -28,15 +30,21 @@ func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*do
 	return &createdUser, nil
 }
 
-func (u Controller) Update(ctx context.Context, userInput domain.UserInput) (*domain.User, error) {
-	if userInput.Password != "" {
-		err := userInput.HashPassword()
+func (u Controller) Update(ctx context.Context, userUpdate domain.UserUpdate) (*domain.User, error) {
+	var hashedPassword string
+
+	if userUpdate.Password != "" {
+		var err error
+
+		hashedPassword, err = domain.HashPassword(userUpdate.Password)
 		if err != nil {
-			return nil, fmt.Errorf("update user: %w", err)
+			return nil, fmt.Errorf("create user: %w", err)
 		}
 	}
 
-	user, err := u.storage.Update(ctx, domain.UserInputToStorage(userInput))
+	userUpdate.Password = hashedPassword
+
+	user, err := u.storage.Update(ctx, domain.UserUpdateToStorage(userUpdate))
 	if err != nil {
 		return nil, fmt.Errorf("update user: %w", err)
 	}

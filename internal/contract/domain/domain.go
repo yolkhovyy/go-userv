@@ -32,7 +32,7 @@ type Reader interface {
 }
 
 type Updater interface {
-	Update(ctx context.Context, user UserInput) (*User, error)
+	Update(ctx context.Context, user UserUpdate) (*User, error)
 }
 
 type Deleter interface {
@@ -45,6 +45,8 @@ type User storage.User
 
 type UserInput storage.UserInput
 
+type UserUpdate storage.UserUpdate
+
 type UserList storage.UserList
 
 func UserFromStorage(user storage.User) User {
@@ -55,17 +57,19 @@ func UserInputToStorage(userInput UserInput) storage.UserInput {
 	return storage.UserInput(userInput)
 }
 
+func UserUpdateToStorage(userUpdate UserUpdate) storage.UserUpdate {
+	return storage.UserUpdate(userUpdate)
+}
+
 func UsersFromStorage(users storage.UserList) UserList {
 	return UserList(users)
 }
 
-func (u *UserInput) HashPassword() error {
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+func HashPassword(password string) (string, error) {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("password hash: %w", err)
+		return "", fmt.Errorf("password hash: %w", err)
 	}
 
-	u.Password = string(passwordHash)
-
-	return nil
+	return string(passwordHash), nil
 }

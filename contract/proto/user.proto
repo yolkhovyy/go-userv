@@ -9,7 +9,7 @@ option go_package = "contract/proto;userpb";
 
 service UserService {
   rpc Create(UserInput) returns (User);
-  rpc Update(UserInput) returns (User);
+  rpc Update(UserUpdate) returns (User);
   rpc Get(UserID) returns (User);
   rpc List(ListRequest) returns (Users);
   rpc Delete(UserID) returns (google.protobuf.Empty);
@@ -37,6 +37,16 @@ message UserInput {
   string email = 4;
   string country = 5;
   string password = 6;
+}
+
+message UserUpdate {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string nickname = 4;
+  string email = 5;
+  string country = 6;
+  string password = 7;
 }
 
 message Users {

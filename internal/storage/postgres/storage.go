@@ -31,7 +31,7 @@ func (c *Controller) Create(ctx context.Context, user storage.UserInput) (*stora
 	return createdUser, nil
 }
 
-func (c *Controller) Update(ctx context.Context, user storage.UserInput) (*storage.User, error) {
+func (c *Controller) Update(ctx context.Context, user storage.UserUpdate) (*storage.User, error) {
 	query := `
 		UPDATE users SET
 			first_name = CASE WHEN $2 != '' THEN $2 ELSE users.first_name END,
@@ -45,16 +45,18 @@ func (c *Controller) Update(ctx context.Context, user storage.UserInput) (*stora
 		RETURNING id, first_name, last_name, nickname, email, country, created_at, updated_at`
 
 	row := c.pool.QueryRow(ctx, query,
-		uuid.New(), user.FirstName, user.LastName, user.Nickname,
+		user.ID, user.FirstName, user.LastName, user.Nickname,
 		user.Password, user.Email, user.Country)
 
-	updatedUser := &storage.User{}
+	updatedUser := storage.User{}
 	if err := row.Scan(&updatedUser.ID, &updatedUser.FirstName, &updatedUser.LastName, &updatedUser.Nickname,
 		&updatedUser.Email, &updatedUser.Country, &updatedUser.CreatedAt, &updatedUser.UpdatedAt); err != nil {
+		log.Error().Err(err).Msg("=============================== 21")
+
 		return nil, fmt.Errorf("update user: %w", err)
 	}
 
-	return updatedUser, nil
+	return &updatedUser, nil
 }
 
 func (c *Controller) Get(ctx context.Context, userID uuid.UUID) (*storage.User, error) {
