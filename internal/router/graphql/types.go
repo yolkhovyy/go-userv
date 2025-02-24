@@ -14,14 +14,14 @@ var userType = graphql.NewObject(graphql.ObjectConfig{
 		"nickname":  &graphql.Field{Type: graphql.NewNonNull(graphql.String)},
 		"email":     &graphql.Field{Type: graphql.NewNonNull(graphql.String)},
 		"country":   &graphql.Field{Type: graphql.NewNonNull(graphql.String)},
-		"createdAt": &graphql.Field{Type: graphql.NewNonNull(graphql.String)},
-		"updatedAt": &graphql.Field{Type: graphql.NewNonNull(graphql.String)},
+		"createdAt": &graphql.Field{Type: graphql.NewNonNull(graphql.DateTime)},
+		"updatedAt": &graphql.Field{Type: graphql.NewNonNull(graphql.DateTime)},
 	},
 })
 
 //nolint:gochecknoglobals
 var userCreateType = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UseCreate",
+	Name: "UserCreate",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"firstName": &graphql.InputObjectFieldConfig{Type: graphql.String},
 		"lastName":  &graphql.InputObjectFieldConfig{Type: graphql.String},

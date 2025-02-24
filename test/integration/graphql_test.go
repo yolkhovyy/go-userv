@@ -11,68 +11,59 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	userrest "github.com/yolkhovyy/user/client/user-rest"
+	usergraphql "github.com/yolkhovyy/user/client/user-graphql"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
-type testCase struct {
-	name     string
-	testFunc func(t *testing.T, tcase testCase)
-	numUsers int
-	pageSize int
-	country  string
-}
-
-type TestSuite struct {
+type GraphQLTestSuite struct {
 	suite.Suite
-	client *userrest.Client
-	cases  []testCase
+	client    *usergraphql.Client
+	testCases []testCase
 }
 
-func TestSuiteRun(t *testing.T) {
-	suite.Run(t, new(TestSuite))
+func TestGraphQLSuiteRun(t *testing.T) {
+	suite.Run(t, new(GraphQLTestSuite))
 }
 
-func (s *TestSuite) SetupSuite() {
-	s.client = userrest.NewClient("http://localhost:8080")
-	s.cases = []testCase{
-		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100, country: "US"},
-		{name: "GetUpdateUser", testFunc: s.getUpdateUser, numUsers: 100, country: "US"},
-		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12, country: "US"},
-		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100, country: "US"},
+func (s *GraphQLTestSuite) SetupSuite() {
+	s.client = usergraphql.NewClient("http://localhost:8081")
+	s.testCases = []testCase{
+		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100, country: "NL"},
+		{name: "GetUpdateUser", testFunc: s.getUpdateUser, numUsers: 100, country: "NL"},
+		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12, country: "NL"},
+		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100, country: "NL"},
 	}
 }
 
-func (s *TestSuite) TearDownSuite() {
+func (s *GraphQLTestSuite) TearDownSuite() {
 	// TODO: tear down suite.
 }
 
-func (s *TestSuite) SetupTest() {
+func (s *GraphQLTestSuite) SetupTest() {
 	// TODO: setup test.
 }
 
-func (s *TestSuite) TearDownTest() {
+func (s *GraphQLTestSuite) TearDownTest() {
 	// TODO: tear down test.
 }
 
-func (s *TestSuite) TestREST() {
-	for _, tc := range s.cases {
+func (s *GraphQLTestSuite) TestGraphQL() {
+	for _, tc := range s.testCases {
 		s.T().Run(tc.name, func(t *testing.T) {
 			tc.testFunc(t, tc)
 		})
 	}
 }
 
-func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
+func (s *GraphQLTestSuite) createUsers(t *testing.T, tcase testCase) {
 	for i := 0; i < tcase.numUsers; i++ {
-		userID := uuid.New()
 		userInput := domain.UserInput{
-			FirstName: fmt.Sprintf("FirstName%d", i),
-			LastName:  fmt.Sprintf("LastName%d", i),
-			Nickname:  fmt.Sprintf("user-%s", userID.String()),
-			Email:     fmt.Sprintf("user.%s@example.com", userID.String()),
+			FirstName: fmt.Sprintf("First"),
+			LastName:  fmt.Sprintf("Last, %d", i),
+			Nickname:  fmt.Sprintf("user%d", i),
+			Email:     fmt.Sprintf("user.%d@example.com", i),
 			Country:   tcase.country,
-			Password:  fmt.Sprintf("securepassword%d", i),
+			Password:  fmt.Sprintf("securepassword.%d", i),
 		}
 
 		createdUser, err := s.client.Create(context.Background(), userInput)
@@ -93,7 +84,7 @@ func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
 		assert.Equal(t, createdUser.CreatedAt, createdUser.UpdatedAt)
 	}
 
-	// Verify that we can list all created list.
+	// Verify that we can list all created users.
 	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, tcase.country)
 	require.NoError(t, err)
 	assert.Equal(t, tcase.numUsers, list.TotalCount)
@@ -101,7 +92,7 @@ func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
 	assert.Equal(t, tcase.numUsers, len(list.Users))
 }
 
-func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
+func (s *GraphQLTestSuite) getUpdateUser(t *testing.T, tcase testCase) {
 	list, err := s.client.List(context.Background(), 1, 1, tcase.country)
 	require.NoError(t, err)
 	assert.Equal(t, tcase.numUsers, list.TotalCount)
@@ -129,13 +120,13 @@ func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
 		LastName:  "Smith",
 		Nickname:  "bsmith",
 		Email:     "bsmith@example.com",
-		Country:   "CA",
+		Country:   "DE",
 		Password:  "newsecurepassword",
 	}
 
 	updatedUser, err := s.client.Update(context.Background(), userUpdate)
 	require.NoError(t, err)
-	assert.NotNil(t, user)
+	assert.NotNil(t, updatedUser)
 
 	assert.Equal(t, userUpdate.ID, updatedUser.ID)
 	assert.Equal(t, userUpdate.FirstName, updatedUser.FirstName)
@@ -147,7 +138,7 @@ func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
 	assert.Greater(t, updatedUser.UpdatedAt, oneUser.UpdatedAt)
 }
 
-func (s *TestSuite) listUsers(t *testing.T, tcase testCase) {
+func (s *GraphQLTestSuite) listUsers(t *testing.T, tcase testCase) {
 	lastPage := 1 + (tcase.numUsers+tcase.pageSize/2)/tcase.pageSize
 	for page := 1; page <= lastPage; page++ {
 		list, err := s.client.List(context.Background(), page, tcase.pageSize, "")
@@ -163,7 +154,7 @@ func (s *TestSuite) listUsers(t *testing.T, tcase testCase) {
 	}
 }
 
-func (s *TestSuite) deleteAllUsers(t *testing.T, tcase testCase) {
+func (s *GraphQLTestSuite) deleteAllUsers(t *testing.T, tcase testCase) {
 	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, tcase.country)
 	require.NoError(t, err)
 
