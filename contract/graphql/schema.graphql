@@ -5,8 +5,8 @@ type User {
   nickname: String!
   email: String!
   country: String!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input UserCreate {
@@ -29,7 +29,7 @@ input UserUpdate {
 }
 
 type Users {
-  users: [User!]
+  users: [User!]!
   totalCount: Int!
   nextPage: Int!
 }

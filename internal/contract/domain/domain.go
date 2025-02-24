@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/google/uuid"
+	usergrpc "github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/storage"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -53,6 +54,10 @@ func UserFromStorage(user storage.User) User {
 	return User(user)
 }
 
+func UserToStorage(user User) storage.User {
+	return storage.User(user)
+}
+
 func UserInputToStorage(userInput UserInput) storage.UserInput {
 	return storage.UserInput(userInput)
 }
@@ -61,8 +66,34 @@ func UserUpdateToStorage(userUpdate UserUpdate) storage.UserUpdate {
 	return storage.UserUpdate(userUpdate)
 }
 
-func UsersFromStorage(users storage.UserList) UserList {
-	return UserList(users)
+func UserListFromStorage(userList storage.UserList) UserList {
+	return UserList(userList)
+}
+
+func UserFromGrpc(user *usergrpc.User) User {
+	return User{
+		ID:        uuid.MustParse(user.GetId()),
+		FirstName: user.GetFirstName(),
+		LastName:  user.GetLastName(),
+		Nickname:  user.GetNickname(),
+		Email:     user.GetEmail(),
+		Country:   user.GetCountry(),
+	}
+}
+
+func UserListFromGrpc(userList *usergrpc.Users) UserList {
+	users := make([]storage.User, len(userList.GetUsers()))
+
+	for i, u := range userList.GetUsers() {
+		du := UserToStorage(UserFromGrpc(u))
+		users[i] = du
+	}
+
+	return UserList{
+		Users:      users,
+		TotalCount: int(userList.GetTotalCount()),
+		NextPage:   int(userList.GetNextPage()),
+	}
 }
 
 func HashPassword(password string) (string, error) {

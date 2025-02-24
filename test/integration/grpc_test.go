@@ -11,54 +11,57 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	usergraphql "github.com/yolkhovyy/user/client/user-graphql"
+	usergrpc "github.com/yolkhovyy/user/client/user-grpc"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
-type testCaseGraphQL struct {
+type testCaseGRPC struct {
 	name     string
-	testFunc func(t *testing.T, tcase testCaseGraphQL)
+	testFunc func(t *testing.T, tcase testCaseGRPC)
 	numUsers int
 	pageSize int
 }
-type testSuiteGraphQL struct {
+
+type testSuiteGRPC struct {
 	suite.Suite
-	client        *usergraphql.Client
-	testCases     []testCaseGraphQL
+	client        *usergrpc.Client
+	testCases     []testCaseGRPC
 	createCountry string
 	updateCountry string
 }
 
-func TestGraphQLSuiteRun(t *testing.T) {
+func TestGRPCSuiteRun(t *testing.T) {
 	t.Parallel()
-	suite.Run(t, new(testSuiteGraphQL))
+	suite.Run(t, new(testSuiteGRPC))
 }
 
-func (s *testSuiteGraphQL) SetupSuite() {
-	s.client = usergraphql.NewClient("http://localhost:8081")
-	s.testCases = []testCaseGraphQL{
+func (s *testSuiteGRPC) SetupSuite() {
+	var err error
+	s.client, err = usergrpc.NewClient("localhost:50051")
+	require.Nil(s.T(), err)
+	s.testCases = []testCaseGRPC{
 		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
 		{name: "GetUpdateDeleteUser", testFunc: s.getUpdateDeleteUser, numUsers: 100},
 		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12},
 		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100},
 	}
-	s.createCountry = "YA"
-	s.updateCountry = "YB"
+	s.createCountry = "ZB"
+	s.updateCountry = "ZC"
 }
 
-func (s *testSuiteGraphQL) TearDownSuite() {
+func (s *testSuiteGRPC) TearDownSuite() {
 	// TODO: tear down suite.
 }
 
-func (s *testSuiteGraphQL) SetupTest() {
+func (s *testSuiteGRPC) SetupTest() {
 	// TODO: setup test.
 }
 
-func (s *testSuiteGraphQL) TearDownTest() {
+func (s *testSuiteGRPC) TearDownTest() {
 	// TODO: tear down test.
 }
 
-func (s *testSuiteGraphQL) TestGraphQL() {
+func (s *testSuiteGRPC) TestGRPC() {
 	for _, tc := range s.testCases {
 		s.T().Run(tc.name, func(t *testing.T) {
 			tc.testFunc(t, tc)
@@ -66,13 +69,13 @@ func (s *testSuiteGraphQL) TestGraphQL() {
 	}
 }
 
-func (s *testSuiteGraphQL) createUsers(t *testing.T, tcase testCaseGraphQL) {
+func (s *testSuiteGRPC) createUsers(t *testing.T, tcase testCaseGRPC) {
 	for i := 0; i < tcase.numUsers; i++ {
 		userInput := domain.UserInput{
-			FirstName: fmt.Sprintf("GraphQL"),
+			FirstName: fmt.Sprintf("gRPC"),
 			LastName:  fmt.Sprintf("User, %d", i),
-			Nickname:  fmt.Sprintf("graphqluser%d", i),
-			Email:     fmt.Sprintf("graphql.user.%d@example.com", i),
+			Nickname:  fmt.Sprintf("grpcuser%d", i),
+			Email:     fmt.Sprintf("grpc.user.%d@example.com", i),
 			Country:   s.createCountry,
 			Password:  fmt.Sprintf("securepassword.%d", i),
 		}
@@ -103,7 +106,7 @@ func (s *testSuiteGraphQL) createUsers(t *testing.T, tcase testCaseGraphQL) {
 	assert.Equal(t, tcase.numUsers, len(list.Users))
 }
 
-func (s *testSuiteGraphQL) getUpdateDeleteUser(t *testing.T, tcase testCaseGraphQL) {
+func (s *testSuiteGRPC) getUpdateDeleteUser(t *testing.T, tcase testCaseGRPC) {
 	list, err := s.client.List(context.Background(), 1, 1, s.createCountry)
 	require.NoError(t, err)
 	assert.Equal(t, tcase.numUsers, list.TotalCount)
@@ -119,10 +122,10 @@ func (s *testSuiteGraphQL) getUpdateDeleteUser(t *testing.T, tcase testCaseGraph
 
 	userUpdate := domain.UserUpdate{
 		ID:        user.ID,
-		FirstName: "GraphQL",
+		FirstName: "gRPC",
 		LastName:  "User",
-		Nickname:  fmt.Sprintf("graphqluser.%s", user.ID.String()),
-		Email:     fmt.Sprintf("graphql.user.%s@example.com", user.ID.String()),
+		Nickname:  fmt.Sprintf("grpcuser.%s", user.ID.String()),
+		Email:     fmt.Sprintf("grpc.user.%s@example.com", user.ID.String()),
 		Country:   s.updateCountry,
 		Password:  "newsecurepassword",
 	}
@@ -144,7 +147,7 @@ func (s *testSuiteGraphQL) getUpdateDeleteUser(t *testing.T, tcase testCaseGraph
 	require.NoError(t, err)
 }
 
-func (s *testSuiteGraphQL) listUsers(t *testing.T, tcase testCaseGraphQL) {
+func (s *testSuiteGRPC) listUsers(t *testing.T, tcase testCaseGRPC) {
 	lastPage := 1 + (tcase.numUsers+tcase.pageSize/2)/tcase.pageSize
 	for page := 1; page <= lastPage; page++ {
 		list, err := s.client.List(context.Background(), page, tcase.pageSize, s.createCountry)
@@ -160,7 +163,7 @@ func (s *testSuiteGraphQL) listUsers(t *testing.T, tcase testCaseGraphQL) {
 	}
 }
 
-func (s *testSuiteGraphQL) deleteAllUsers(t *testing.T, tcase testCaseGraphQL) {
+func (s *testSuiteGRPC) deleteAllUsers(t *testing.T, tcase testCaseGRPC) {
 	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, s.createCountry)
 	require.NoError(t, err)
 

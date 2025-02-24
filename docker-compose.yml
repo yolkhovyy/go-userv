@@ -40,7 +40,6 @@ services:
       dockerfile: cmd/user-graphql/Dockerfile
       target: ${BUILD_TARGET:-release}
     environment:
-      - USER_ROUTER_MODE
       - USER_HTTP_PORT
       - USER_HTTP_SHUTDOWNTIMEOUT
       - USER_HTTP_READHEADERTIMEOUT
@@ -65,7 +64,6 @@ services:
       dockerfile: cmd/user-grpc/Dockerfile
       target: ${BUILD_TARGET:-release}
     environment:
-      - USER_ROUTER_MODE
       - USER_GRPC_PORT
       - USER_GRPC_REFLECTION
       - USER_POSTGRES_HOST

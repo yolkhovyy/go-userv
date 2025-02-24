@@ -2,6 +2,7 @@ PROJECT_NAME ?= $(notdir $(shell pwd))
 
 export COMPOSE_DOCKER_CLI_BUILD = 1
 export DOCKER_BUILDKIT = 1
+export COMPOSE_BAKE = true
 
 DC = docker compose
 export DEPENDENCIES = postgres zookeeper kafka kafka-initializer

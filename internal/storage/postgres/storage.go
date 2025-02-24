@@ -86,9 +86,9 @@ func (c *Controller) List(ctx context.Context, page int, limit int, countryCode 
 
 	var count int
 
-	query := `SELECT COUNT(*) FROM users`
+	query := `SELECT COUNT(*) FROM users WHERE country = $1`
 
-	if err := pgxscan.Get(ctx, trx, &count, query); err != nil {
+	if err := pgxscan.Get(ctx, trx, &count, query, countryCode); err != nil {
 		return nil, 0, fmt.Errorf("count users: %w", err)
 	}
 

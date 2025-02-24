@@ -56,11 +56,7 @@ func (u *UserUpdate) Validate() error {
 }
 
 func ValidateCountryCode(countryCode string) error {
-	if countryCode == "" {
-		return fmt.Errorf("code: %w", ErrCountryCode)
-	}
-
-	if match, _ := regexp.MatchString("^[A-Z]{2}$", countryCode); !match {
+	if match, _ := regexp.MatchString("^[A-Z]{2}$", countryCode); !match && countryCode != "" {
 		return fmt.Errorf("country code: %w %s", ErrCountryCode, countryCode)
 	}
 

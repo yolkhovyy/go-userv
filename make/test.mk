@@ -10,6 +10,6 @@ unit-test: generate-mocks ## Run unit tests
 .PHONY: integration-test
 integration-test: export BUILD_TARGET = test
 integration-test: ## Run integration tests
-	@$(MAKE) dc-build-up; sleep 7
+	@$(MAKE) dc-build-up
 	@./make/scripts/integration-test.sh
 	@$(MAKE) dc-stop

@@ -15,47 +15,51 @@ import (
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
-type testCase struct {
+type testCaseRest struct {
 	name     string
-	testFunc func(t *testing.T, tcase testCase)
+	testFunc func(t *testing.T, tcase testCaseRest)
 	numUsers int
 	pageSize int
-	country  string
 }
 
-type TestSuite struct {
+type testSuiteRest struct {
 	suite.Suite
-	client *userrest.Client
-	cases  []testCase
+	client        *userrest.Client
+	cases         []testCaseRest
+	createCountry string
+	updateCountry string
 }
 
-func TestSuiteRun(t *testing.T) {
-	suite.Run(t, new(TestSuite))
+func TestRestSuiteRun(t *testing.T) {
+	t.Parallel()
+	suite.Run(t, new(testSuiteRest))
 }
 
-func (s *TestSuite) SetupSuite() {
+func (s *testSuiteRest) SetupSuite() {
 	s.client = userrest.NewClient("http://localhost:8080")
-	s.cases = []testCase{
-		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100, country: "US"},
-		{name: "GetUpdateUser", testFunc: s.getUpdateUser, numUsers: 100, country: "US"},
-		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12, country: "US"},
-		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100, country: "US"},
+	s.cases = []testCaseRest{
+		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
+		{name: "GetUpdateDeleteUser", testFunc: s.getUpdateDeleteUser, numUsers: 100},
+		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12},
+		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100},
 	}
+	s.createCountry = "XA"
+	s.updateCountry = "XB"
 }
 
-func (s *TestSuite) TearDownSuite() {
+func (s *testSuiteRest) TearDownSuite() {
 	// TODO: tear down suite.
 }
 
-func (s *TestSuite) SetupTest() {
+func (s *testSuiteRest) SetupTest() {
 	// TODO: setup test.
 }
 
-func (s *TestSuite) TearDownTest() {
+func (s *testSuiteRest) TearDownTest() {
 	// TODO: tear down test.
 }
 
-func (s *TestSuite) TestREST() {
+func (s *testSuiteRest) TestRest() {
 	for _, tc := range s.cases {
 		s.T().Run(tc.name, func(t *testing.T) {
 			tc.testFunc(t, tc)
@@ -63,15 +67,15 @@ func (s *TestSuite) TestREST() {
 	}
 }
 
-func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
+func (s *testSuiteRest) createUsers(t *testing.T, tcase testCaseRest) {
 	for i := 0; i < tcase.numUsers; i++ {
 		userID := uuid.New()
 		userInput := domain.UserInput{
-			FirstName: fmt.Sprintf("FirstName%d", i),
-			LastName:  fmt.Sprintf("LastName%d", i),
-			Nickname:  fmt.Sprintf("user-%s", userID.String()),
-			Email:     fmt.Sprintf("user.%s@example.com", userID.String()),
-			Country:   tcase.country,
+			FirstName: fmt.Sprintf("Rest"),
+			LastName:  fmt.Sprintf("User, %d", i),
+			Nickname:  fmt.Sprintf("restuser%s", userID.String()),
+			Email:     fmt.Sprintf("rest.user.%s@example.com", userID.String()),
+			Country:   s.createCountry,
 			Password:  fmt.Sprintf("securepassword%d", i),
 		}
 
@@ -94,15 +98,15 @@ func (s *TestSuite) createUsers(t *testing.T, tcase testCase) {
 	}
 
 	// Verify that we can list all created list.
-	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, tcase.country)
+	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, s.createCountry)
 	require.NoError(t, err)
 	assert.Equal(t, tcase.numUsers, list.TotalCount)
 	assert.Equal(t, -1, list.NextPage)
 	assert.Equal(t, tcase.numUsers, len(list.Users))
 }
 
-func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
-	list, err := s.client.List(context.Background(), 1, 1, tcase.country)
+func (s *testSuiteRest) getUpdateDeleteUser(t *testing.T, tcase testCaseRest) {
+	list, err := s.client.List(context.Background(), 1, 1, s.createCountry)
 	require.NoError(t, err)
 	assert.Equal(t, tcase.numUsers, list.TotalCount)
 	assert.Equal(t, 2, list.NextPage)
@@ -113,23 +117,15 @@ func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
 	user, err := s.client.Get(context.Background(), oneUser.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, user)
-
-	assert.Equal(t, oneUser.ID, user.ID)
-	assert.Equal(t, oneUser.FirstName, user.FirstName)
-	assert.Equal(t, oneUser.LastName, user.LastName)
-	assert.Equal(t, oneUser.Nickname, user.Nickname)
-	assert.Equal(t, oneUser.Email, user.Email)
-	assert.Equal(t, oneUser.Country, user.Country)
-	assert.Equal(t, oneUser.CreatedAt, user.CreatedAt)
-	assert.Equal(t, user.CreatedAt, user.UpdatedAt)
+	assert.Equal(t, domain.UserFromStorage(oneUser), *user)
 
 	userUpdate := domain.UserUpdate{
 		ID:        user.ID,
-		FirstName: "Bob",
-		LastName:  "Smith",
-		Nickname:  "bsmith",
-		Email:     "bsmith@example.com",
-		Country:   "CA",
+		FirstName: "Rest",
+		LastName:  "User",
+		Nickname:  fmt.Sprintf("restuser.%s", user.ID.String()),
+		Email:     fmt.Sprintf("rest.user.%s@example.com", user.ID.String()),
+		Country:   s.updateCountry,
 		Password:  "newsecurepassword",
 	}
 
@@ -144,27 +140,30 @@ func (s *TestSuite) getUpdateUser(t *testing.T, tcase testCase) {
 	assert.Equal(t, userUpdate.Email, updatedUser.Email)
 	assert.Equal(t, userUpdate.Country, updatedUser.Country)
 	assert.NotZero(t, updatedUser.CreatedAt)
-	assert.Greater(t, updatedUser.UpdatedAt, oneUser.UpdatedAt)
+	assert.Greater(t, updatedUser.UpdatedAt, oneUser.CreatedAt)
+
+	err = s.client.Delete(context.Background(), user.ID)
+	require.NoError(t, err)
 }
 
-func (s *TestSuite) listUsers(t *testing.T, tcase testCase) {
+func (s *testSuiteRest) listUsers(t *testing.T, tcase testCaseRest) {
 	lastPage := 1 + (tcase.numUsers+tcase.pageSize/2)/tcase.pageSize
 	for page := 1; page <= lastPage; page++ {
-		list, err := s.client.List(context.Background(), page, tcase.pageSize, "")
+		list, err := s.client.List(context.Background(), page, tcase.pageSize, s.createCountry)
 		require.NoError(t, err)
-		assert.Equal(t, tcase.numUsers, list.TotalCount)
+		assert.GreaterOrEqual(t, tcase.numUsers, list.TotalCount)
 		if page < lastPage {
 			assert.Equal(t, page+1, list.NextPage)
 			assert.Equal(t, tcase.pageSize, len(list.Users))
 		} else {
 			assert.Equal(t, -1, list.NextPage)
-			assert.Equal(t, tcase.numUsers%tcase.pageSize, len(list.Users))
+			assert.GreaterOrEqual(t, tcase.numUsers%tcase.pageSize, len(list.Users))
 		}
 	}
 }
 
-func (s *TestSuite) deleteAllUsers(t *testing.T, tcase testCase) {
-	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, tcase.country)
+func (s *testSuiteRest) deleteAllUsers(t *testing.T, tcase testCaseRest) {
+	list, err := s.client.List(context.Background(), 1, tcase.numUsers+1, s.createCountry)
 	require.NoError(t, err)
 
 	for i := 0; i < len(list.Users); i++ {

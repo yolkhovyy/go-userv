@@ -2,13 +2,13 @@ package grpc
 
 import (
 	"github.com/rs/zerolog/log"
-	userpb "github.com/yolkhovyy/user/contract/proto"
+	usergrpc "github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
 type Controller struct {
 	domain domain.Contract
-	userpb.UnimplementedUserServiceServer
+	usergrpc.UnimplementedUserServiceServer
 }
 
 func New(_ Config, domain domain.Contract) *Controller {
