@@ -254,8 +254,7 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
   * Returns health status of the User Service
 
 ### TODO
-* Integration tests
-* More unit tests
 * Snyk
+* More unit tests
 * API annotaions and documentation
 * Telemetry

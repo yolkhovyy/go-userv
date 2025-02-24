@@ -13,3 +13,6 @@ results/
 
 # Keep secrets local
 .env
+
+# Snyk
+.dccache
