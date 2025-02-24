@@ -6,7 +6,6 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
-	"github.com/rs/zerolog/log"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
@@ -36,22 +35,6 @@ func New(_ Config, domain domain.Contract) (*Controller, error) {
 	return &controller, nil
 }
 
-func (c *Controller) Close() error {
-	log.Debug().Msg("router closing")
-
-	if err := c.domain.Close(); err != nil {
-		log.Error().Err(err).Msg("router domain close")
-	}
-
-	log.Trace().Msg("router closed")
-
-	return nil
-}
-
 func (c *Controller) Handler() http.Handler {
 	return c.handler
-}
-
-func (c *Controller) Schema() *graphql.Schema {
-	return c.handler.Schema
 }

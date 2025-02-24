@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
@@ -40,18 +39,6 @@ func New(config Config, domain domain.Contract) *Controller {
 	controller.handler = engine
 
 	return &controller
-}
-
-func (c *Controller) Close() error {
-	log.Debug().Msg("router closing")
-
-	if err := c.domain.Close(); err != nil {
-		log.Error().Err(err).Msg("router domain close")
-	}
-
-	log.Trace().Msg("router closed")
-
-	return nil
 }
 
 func (c *Controller) Handler() http.Handler {

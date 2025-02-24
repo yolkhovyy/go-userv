@@ -36,7 +36,7 @@ jobs:
           name: unit-test-results
           path: results/unit-test.xml
 
-      - name: Publish Test Report
+      - name: Publish Unit Test Report
         uses: dorny/test-reporter@v1
         with:
           name: Unit Test Results
@@ -49,7 +49,7 @@ jobs:
           name: integration-test-results
           path: results/integration-test.xml
 
-      - name: Publish Integration Report
+      - name: Publish Integration Test Report
         uses: dorny/test-reporter@v1
         with:
           name: Integration Test Results
