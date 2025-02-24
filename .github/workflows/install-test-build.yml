@@ -33,7 +33,7 @@ jobs:
       - name: Upload Unit Test Results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: unit-test-results
           path: results/unit-test.xml
 
       - name: Publish Test Report
@@ -46,7 +46,7 @@ jobs:
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: integration-test-results
           path: results/integration-test.xml
 
       - name: Publish Integration Report
