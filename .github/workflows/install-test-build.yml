@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - master
-      - develop
       - feature/*
+  workflow_dispatch:
 
 permissions:
   checks: write
