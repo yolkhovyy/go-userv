@@ -38,7 +38,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-    
       - name: Set up Snyk CLI to check for security issues
         # Snyk can be used to break the build when it detects security issues.
         # In this case we want to upload the SAST issues to GitHub Code Scanning
@@ -54,15 +53,11 @@ jobs:
           # This is where you will need to introduce the Snyk API token created with your Snyk account
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Authenticate Snyk
-        run: snyk auth $SNYK_TOKEN
-  
-  
         # Runs Snyk Code (SAST) analysis and uploads result into GitHub.
         # Use || true to not fail the pipeline
         # FIXME: it fails
-      # - name: Snyk Code test
-      #   run: snyk code test --sarif > snyk-code.sarif # || true
+      - name: Snyk Code test
+        run: snyk code test --sarif > snyk-code.sarif # || true
 
         # Runs Snyk Open Source (SCA) analysis and uploads result to Snyk.
       - name: Snyk Open Source monitor
@@ -77,13 +72,13 @@ jobs:
         # TODO:  uncomment when images are pushed
       # - name: Build a Docker image
       #   run: docker build -t your/image-to-test .
-      #   # Runs Snyk Container (Container and SCA) analysis and uploads result to Snyk.
+        # Runs Snyk Container (Container and SCA) analysis and uploads result to Snyk.
       # - name: Snyk Container monitor
       #   run: snyk container monitor your/image-to-test --file=Dockerfile
 
         # Push the Snyk Code results into GitHub Code Scanning tab
         # FIXME: Uncomment when sarif is fixed, see above
-      # - name: Upload result to GitHub Code Scanning
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: snyk-code.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-code.sarif
