@@ -1,31 +1,25 @@
 package config
 
 import (
-	"flag"
 	"fmt"
 	"strings"
 
-	"github.com/spf13/viper"
+	"github.com/yolkhovyy/go-utilities/viperx"
 )
 
-func Load(prefix string, config any) error {
-	configFile := flag.String("config", "config.yml",
-		"Path to the configuration file (default: config.yml)")
+func Load(
+	configFile string,
+	prefix string,
+	replacer *strings.Replacer,
+	defaults map[string]any,
+	config any,
+) error {
+	vprx := viperx.New(configFile, prefix, replacer)
 
-	flag.Parse()
+	vprx.SetDefaults(defaults)
 
-	viper.Reset()
-	viper.SetConfigFile(*configFile)
-	viper.SetEnvPrefix(prefix)
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("config read error: %w", err)
-	}
-
-	if err := viper.Unmarshal(config); err != nil {
-		return fmt.Errorf("config unmarshal error: %w", err)
+	if err := vprx.Load(config); err != nil {
+		return fmt.Errorf("load config error: %w", err)
 	}
 
 	return nil

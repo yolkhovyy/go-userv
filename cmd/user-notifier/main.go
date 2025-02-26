@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,10 +24,16 @@ func run() int {
 	log := logger.Init(serviceName)
 	log.Info().Msg("starting")
 
+	// Congig file.
+	configFile := flag.String("config", "config.yml",
+		"Path to the configuration file (default: config.yml)")
+
+	flag.Parse()
+
 	// Service configuration.
 	config := Config{}
 
-	err := config.Load(domainName)
+	err := config.Load(*configFile, domainName)
 	if err != nil {
 		log.Error().Err(err).Msg("config load")
 
