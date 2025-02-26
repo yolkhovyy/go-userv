@@ -27,7 +27,7 @@ go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 ## Generate Protobuf Files
 
 ```bash
-protoc --go_out=. --go-grpc_out=. contract/proto/user.proto
+protoc --go_out=. --go-grpc_out=. contract/grpc/user.proto
 ```
 
 ## Inspect gRPC Service

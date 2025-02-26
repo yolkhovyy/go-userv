@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	userrest "github.com/yolkhovyy/user/client/user-rest"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	restclient "github.com/yolkhovyy/user/client/user-rest"
+	"github.com/yolkhovyy/user/contract/dto"
 )
 
 type testCaseRest struct {
@@ -24,7 +24,7 @@ type testCaseRest struct {
 
 type testSuiteRest struct {
 	suite.Suite
-	client        *userrest.Client
+	client        *restclient.Client
 	cases         []testCaseRest
 	createCountry string
 	updateCountry string
@@ -36,7 +36,7 @@ func TestRestSuiteRun(t *testing.T) {
 }
 
 func (s *testSuiteRest) SetupSuite() {
-	s.client = userrest.NewClient("http://localhost:8080")
+	s.client = restclient.NewClient("http://localhost:8080")
 	s.cases = []testCaseRest{
 		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
 		{name: "GetUpdateDeleteUser", testFunc: s.getUpdateDeleteUser, numUsers: 100},
@@ -70,7 +70,7 @@ func (s *testSuiteRest) TestRest() {
 func (s *testSuiteRest) createUsers(t *testing.T, tcase testCaseRest) {
 	for i := 0; i < tcase.numUsers; i++ {
 		userID := uuid.New()
-		userInput := domain.UserInput{
+		userInput := dto.UserInput{
 			FirstName: fmt.Sprintf("Rest"),
 			LastName:  fmt.Sprintf("User, %d", i),
 			Nickname:  fmt.Sprintf("restuser%s", userID.String()),
@@ -117,9 +117,9 @@ func (s *testSuiteRest) getUpdateDeleteUser(t *testing.T, tcase testCaseRest) {
 	user, err := s.client.Get(context.Background(), oneUser.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, user)
-	assert.Equal(t, domain.UserFromStorage(oneUser), *user)
+	assert.Equal(t, oneUser, *user)
 
-	userUpdate := domain.UserUpdate{
+	userUpdate := dto.UserUpdate{
 		ID:        user.ID,
 		FirstName: "Rest",
 		LastName:  "User",

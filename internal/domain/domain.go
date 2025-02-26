@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/yolkhovyy/user/internal/contract/domain"
-	"github.com/yolkhovyy/user/internal/contract/storage"
 )
 
 func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*domain.User, error) {
@@ -86,11 +85,11 @@ func (u Controller) List(ctx context.Context, page, limit int, countryCode strin
 		nextPage = -1
 	}
 
-	listUsers := domain.UserList(storage.UserList{
-		Users:      users,
+	listUsers := domain.UserList{
+		Users:      domain.UsersFromStorage(users),
 		TotalCount: count,
 		NextPage:   nextPage,
-	})
+	}
 
 	return &listUsers, nil
 }

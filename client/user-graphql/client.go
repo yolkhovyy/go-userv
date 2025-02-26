@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/yolkhovyy/user/contract/dto"
-	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
 // GraphQL client for the user-graphql service.
@@ -69,7 +68,7 @@ func (c *Client) execute(
 }
 
 // Creates a new user.
-func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.User, error) {
+func (c *Client) Create(ctx context.Context, user dto.UserInput) (*dto.User, error) {
 	query := c.replacer.Replace(
 		`mutation CreateUser($input: UserCreate!) {
 			create(input: $input) {
@@ -90,7 +89,7 @@ func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.Use
 
 	var response struct {
 		Data struct {
-			Create domain.User `json:"create"`
+			Create dto.User `json:"create"`
 		} `json:"data"`
 	}
 
@@ -102,7 +101,7 @@ func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.Use
 }
 
 // Retrieves a user by ID.
-func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error) {
+func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*dto.User, error) {
 	query := `
         query GetUser($id: ID!) {
             user(id: $id) {
@@ -123,7 +122,7 @@ func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error
 
 	var response struct {
 		Data struct {
-			User domain.User `json:"user"`
+			User dto.User `json:"user"`
 		} `json:"data"`
 	}
 
@@ -135,7 +134,7 @@ func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error
 }
 
 // Retrieves a list of users.
-func (c *Client) List(ctx context.Context, page, limit int, countryCode string) (*domain.UserList, error) {
+func (c *Client) List(ctx context.Context, page, limit int, countryCode string) (*dto.UserList, error) {
 	query := `
         query ListUsers($page: Int!, $limit: Int!, $country: String) {
             users(page: $page, limit: $limit, country: $country) {
@@ -170,13 +169,11 @@ func (c *Client) List(ctx context.Context, page, limit int, countryCode string) 
 		return nil, err
 	}
 
-	domainUserList := dto.UserListToDomain(response.Data.Users)
-
-	return &domainUserList, nil
+	return &response.Data.Users, nil
 }
 
 // Updates an existing user.
-func (c *Client) Update(ctx context.Context, user domain.UserUpdate) (*domain.User, error) {
+func (c *Client) Update(ctx context.Context, user dto.UserUpdate) (*dto.User, error) {
 	query := `
         mutation UpdateUser($input: UserUpdate!) {
             update(input: $input) {
@@ -197,7 +194,7 @@ func (c *Client) Update(ctx context.Context, user domain.UserUpdate) (*domain.Us
 
 	var response struct {
 		Data struct {
-			Update domain.User `json:"update"`
+			Update dto.User `json:"update"`
 		} `json:"data"`
 	}
 

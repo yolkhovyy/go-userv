@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	usergrpc "github.com/yolkhovyy/user/client/user-grpc"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	grpcclient "github.com/yolkhovyy/user/client/user-grpc"
+	"github.com/yolkhovyy/user/contract/dto"
 )
 
 type testCaseGRPC struct {
@@ -24,7 +24,7 @@ type testCaseGRPC struct {
 
 type testSuiteGRPC struct {
 	suite.Suite
-	client        *usergrpc.Client
+	client        *grpcclient.Client
 	testCases     []testCaseGRPC
 	createCountry string
 	updateCountry string
@@ -37,7 +37,7 @@ func TestGRPCSuiteRun(t *testing.T) {
 
 func (s *testSuiteGRPC) SetupSuite() {
 	var err error
-	s.client, err = usergrpc.NewClient("localhost:50051")
+	s.client, err = grpcclient.NewClient("localhost:50051")
 	require.Nil(s.T(), err)
 	s.testCases = []testCaseGRPC{
 		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
@@ -71,7 +71,7 @@ func (s *testSuiteGRPC) TestGRPC() {
 
 func (s *testSuiteGRPC) createUsers(t *testing.T, tcase testCaseGRPC) {
 	for i := 0; i < tcase.numUsers; i++ {
-		userInput := domain.UserInput{
+		userInput := dto.UserInput{
 			FirstName: fmt.Sprintf("gRPC"),
 			LastName:  fmt.Sprintf("User, %d", i),
 			Nickname:  fmt.Sprintf("grpcuser%d", i),
@@ -118,9 +118,9 @@ func (s *testSuiteGRPC) getUpdateDeleteUser(t *testing.T, tcase testCaseGRPC) {
 	user, err := s.client.Get(context.Background(), oneUser.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, user)
-	assert.Equal(t, domain.UserFromStorage(oneUser), *user)
+	assert.Equal(t, oneUser, *user)
 
-	userUpdate := domain.UserUpdate{
+	userUpdate := dto.UserUpdate{
 		ID:        user.ID,
 		FirstName: "gRPC",
 		LastName:  "User",

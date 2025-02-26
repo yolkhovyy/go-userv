@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: contract/proto/user.proto
 
-package usergrpc
+package proto
 
 import (
 	context "context"

@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/yolkhovyy/user/contract/dto"
-	usergrpc "github.com/yolkhovyy/user/contract/proto"
+	"github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (c *Controller) Create(ctx context.Context, req *usergrpc.UserInput) (*usergrpc.User, error) {
+func (c *Controller) Create(ctx context.Context, req *proto.UserInput) (*proto.User, error) {
 	userInput := dto.UserInput{
 		FirstName: req.GetFirstName(),
 		LastName:  req.GetLastName(),
@@ -35,7 +35,7 @@ func (c *Controller) Create(ctx context.Context, req *usergrpc.UserInput) (*user
 	return userToProto(createdUser), nil
 }
 
-func (c *Controller) Get(ctx context.Context, req *usergrpc.UserID) (*usergrpc.User, error) {
+func (c *Controller) Get(ctx context.Context, req *proto.UserID) (*proto.User, error) {
 	var err error
 
 	var userID uuid.UUID
@@ -55,7 +55,7 @@ func (c *Controller) Get(ctx context.Context, req *usergrpc.UserID) (*usergrpc.U
 	return userToProto(user), nil
 }
 
-func (c *Controller) List(ctx context.Context, req *usergrpc.ListRequest) (*usergrpc.Users, error) {
+func (c *Controller) List(ctx context.Context, req *proto.ListRequest) (*proto.Users, error) {
 	list, err := c.domain.List(ctx, int(req.GetPage()), int(req.GetLimit()), req.GetCountry())
 	if err != nil {
 		log.Error().Err(err).Msg("domain list")
@@ -63,21 +63,20 @@ func (c *Controller) List(ctx context.Context, req *usergrpc.ListRequest) (*user
 		return nil, fmt.Errorf("list: %w", err)
 	}
 
-	protoUsers := make([]*usergrpc.User, len(list.Users))
+	protoUsers := make([]*proto.User, len(list.Users))
 
 	for i, user := range list.Users {
-		du := domain.UserFromStorage(user)
-		protoUsers[i] = userToProto(&du)
+		protoUsers[i] = userToProto(&user)
 	}
 
-	return &usergrpc.Users{
+	return &proto.Users{
 		Users:      protoUsers,
 		TotalCount: int64(list.TotalCount),
 		NextPage:   int64(list.NextPage),
 	}, nil
 }
 
-func (c *Controller) Update(ctx context.Context, req *usergrpc.UserUpdate) (*usergrpc.User, error) {
+func (c *Controller) Update(ctx context.Context, req *proto.UserUpdate) (*proto.User, error) {
 	var err error
 
 	var userID uuid.UUID
@@ -109,7 +108,7 @@ func (c *Controller) Update(ctx context.Context, req *usergrpc.UserUpdate) (*use
 	return userToProto(updatedUser), nil
 }
 
-func (c *Controller) Delete(ctx context.Context, req *usergrpc.UserID) (*empty.Empty, error) {
+func (c *Controller) Delete(ctx context.Context, req *proto.UserID) (*empty.Empty, error) {
 	var err error
 
 	var userID uuid.UUID
@@ -127,8 +126,8 @@ func (c *Controller) Delete(ctx context.Context, req *usergrpc.UserID) (*empty.E
 	return &empty.Empty{}, nil
 }
 
-func userToProto(user *domain.User) *usergrpc.User {
-	return &usergrpc.User{
+func userToProto(user *domain.User) *proto.User {
+	return &proto.User{
 		Id:        user.ID.String(),
 		FirstName: user.FirstName,
 		LastName:  user.LastName,

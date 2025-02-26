@@ -65,7 +65,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
-	github.com/yolkhovyy/go-utilities v0.2.4
+	github.com/yolkhovyy/go-utilities v0.2.5
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
 	golang.org/x/sys v0.30.0 // indirect

@@ -12,7 +12,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/yolkhovyy/user/contract/dto"
-	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
 // REST client for the user-rest service.
@@ -30,7 +29,7 @@ func NewClient(baseURL string) *Client {
 }
 
 // Creates a new user.
-func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.User, error) {
+func (c *Client) Create(ctx context.Context, user dto.UserInput) (*dto.User, error) {
 	body, err := json.Marshal(user)
 	if err != nil {
 		return nil, fmt.Errorf("marshal user input: %w", err)
@@ -53,7 +52,7 @@ func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.Use
 		return nil, fmt.Errorf("create: %w %d", ErrUnexpectedStatusCode, resp.StatusCode)
 	}
 
-	var createdUser domain.User
+	var createdUser dto.User
 	if err := json.NewDecoder(resp.Body).Decode(&createdUser); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
@@ -62,7 +61,7 @@ func (c *Client) Create(ctx context.Context, user domain.UserInput) (*domain.Use
 }
 
 // Retrieves a user by ID.
-func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error) {
+func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*dto.User, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/api/v1/user/%s", c.baseURL, userID), nil)
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
@@ -78,7 +77,7 @@ func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error
 		return nil, fmt.Errorf("get: %w %d", ErrUnexpectedStatusCode, resp.StatusCode)
 	}
 
-	var user domain.User
+	var user dto.User
 	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
@@ -87,7 +86,7 @@ func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*domain.User, error
 }
 
 // Retrieves a list of users.
-func (c *Client) List(ctx context.Context, page, limit int, countryCode string) (*domain.UserList, error) {
+func (c *Client) List(ctx context.Context, page, limit int, countryCode string) (*dto.UserList, error) {
 	query := url.Values{}
 	query.Set("page", strconv.Itoa(page))
 	query.Set("limit", strconv.Itoa(limit))
@@ -117,13 +116,11 @@ func (c *Client) List(ctx context.Context, page, limit int, countryCode string) 
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 
-	domainUserList := dto.UserListToDomain(userList)
-
-	return &domainUserList, nil
+	return &userList, nil
 }
 
 // Updates an existing user.
-func (c *Client) Update(ctx context.Context, user domain.UserUpdate) (*domain.User, error) {
+func (c *Client) Update(ctx context.Context, user dto.UserUpdate) (*dto.User, error) {
 	body, err := json.Marshal(user)
 	if err != nil {
 		return nil, fmt.Errorf("marshal user input: %w", err)
@@ -147,7 +144,7 @@ func (c *Client) Update(ctx context.Context, user domain.UserUpdate) (*domain.Us
 		return nil, fmt.Errorf("update: %w %d", ErrUnexpectedStatusCode, resp.StatusCode)
 	}
 
-	var updatedUser domain.User
+	var updatedUser dto.User
 	if err := json.NewDecoder(resp.Body).Decode(&updatedUser); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}

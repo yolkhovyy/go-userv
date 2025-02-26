@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/google/uuid"
-	usergrpc "github.com/yolkhovyy/user/contract/proto"
+	"github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/storage"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -48,7 +48,11 @@ type UserInput storage.UserInput
 
 type UserUpdate storage.UserUpdate
 
-type UserList storage.UserList
+type UserList struct {
+	Users      []User `json:"users,omitempty"`
+	TotalCount int    `json:"totalCount"`
+	NextPage   int    `json:"nextPage"`
+}
 
 func UserFromStorage(user storage.User) User {
 	return User(user)
@@ -67,10 +71,32 @@ func UserUpdateToStorage(userUpdate UserUpdate) storage.UserUpdate {
 }
 
 func UserListFromStorage(userList storage.UserList) UserList {
-	return UserList(userList)
+	result := UserList{
+		Users:      make([]User, len(userList.Users)),
+		TotalCount: userList.TotalCount,
+		NextPage:   userList.NextPage,
+	}
+
+	for i, u := range userList.Users {
+		du := UserFromStorage(u)
+		result.Users[i] = du
+	}
+
+	return result
 }
 
-func UserFromGrpc(user *usergrpc.User) User {
+func UsersFromStorage(storageUsers []storage.User) []User {
+	users := make([]User, len(storageUsers))
+
+	for i, u := range storageUsers {
+		du := UserFromStorage(u)
+		users[i] = du
+	}
+
+	return users
+}
+
+func UserFromGrpc(user *proto.User) User {
 	return User{
 		ID:        uuid.MustParse(user.GetId()),
 		FirstName: user.GetFirstName(),
@@ -81,11 +107,11 @@ func UserFromGrpc(user *usergrpc.User) User {
 	}
 }
 
-func UserListFromGrpc(userList *usergrpc.Users) UserList {
-	users := make([]storage.User, len(userList.GetUsers()))
+func UserListFromGrpc(userList *proto.Users) UserList {
+	users := make([]User, len(userList.GetUsers()))
 
 	for i, u := range userList.GetUsers() {
-		du := UserToStorage(UserFromGrpc(u))
+		du := UserFromGrpc(u)
 		users[i] = du
 	}
 

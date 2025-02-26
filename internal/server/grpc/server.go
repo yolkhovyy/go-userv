@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/rs/zerolog/log"
-	usergrpc "github.com/yolkhovyy/user/contract/proto"
+	"github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -19,9 +19,9 @@ type Server struct {
 }
 
 //nolint:ireturn
-func New(config Config, serviceServer usergrpc.UserServiceServer, opts ...grpc.ServerOption) server.Contract {
+func New(config Config, serviceServer proto.UserServiceServer, opts ...grpc.ServerOption) server.Contract {
 	grpcServer := grpc.NewServer(opts...)
-	usergrpc.RegisterUserServiceServer(grpcServer, serviceServer)
+	proto.RegisterUserServiceServer(grpcServer, serviceServer)
 
 	if config.Reflection {
 		reflection.Register(grpcServer)

@@ -5,16 +5,15 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	usergrpc "github.com/yolkhovyy/user/contract/proto"
-	"github.com/yolkhovyy/user/internal/contract/domain"
-	"github.com/yolkhovyy/user/internal/contract/storage"
+	"github.com/yolkhovyy/user/contract/dto"
+	"github.com/yolkhovyy/user/contract/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Client struct {
 	conn   *grpc.ClientConn
-	client usergrpc.UserServiceClient
+	client proto.UserServiceClient
 }
 
 func NewClient(address string) (*Client, error) {
@@ -25,7 +24,7 @@ func NewClient(address string) (*Client, error) {
 
 	return &Client{
 		conn:   conn,
-		client: usergrpc.NewUserServiceClient(conn),
+		client: proto.NewUserServiceClient(conn),
 	}, nil
 }
 
@@ -38,8 +37,8 @@ func (c *Client) Close() error {
 	return nil
 }
 
-func (c *Client) Create(ctx context.Context, input domain.UserInput) (*domain.User, error) {
-	req := &usergrpc.UserInput{
+func (c *Client) Create(ctx context.Context, input dto.UserInput) (*dto.User, error) {
+	req := &proto.UserInput{
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
 		Nickname:  input.Nickname,
@@ -50,14 +49,19 @@ func (c *Client) Create(ctx context.Context, input domain.UserInput) (*domain.Us
 
 	resp, err := c.client.Create(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user: %w", err)
+		return nil, fmt.Errorf("create user: %w", err)
 	}
 
-	return protoToUser(resp), nil
+	user, err := dto.UserFromProto(resp)
+	if err != nil {
+		return nil, fmt.Errorf("create user: %w", err)
+	}
+
+	return user, nil
 }
 
-func (c *Client) Get(ctx context.Context, id uuid.UUID) (*domain.User, error) {
-	req := &usergrpc.UserID{
+func (c *Client) Get(ctx context.Context, id uuid.UUID) (*dto.User, error) {
+	req := &proto.UserID{
 		Id: id.String(),
 	}
 
@@ -66,11 +70,16 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*domain.User, error) {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
-	return protoToUser(resp), nil
+	user, err := dto.UserFromProto(resp)
+	if err != nil {
+		return nil, fmt.Errorf("get user: %w", err)
+	}
+
+	return user, nil
 }
 
-func (c *Client) List(ctx context.Context, page, limit int, country string) (*domain.UserList, error) {
-	req := &usergrpc.ListRequest{
+func (c *Client) List(ctx context.Context, page, limit int, country string) (*dto.UserList, error) {
+	req := &proto.ListRequest{
 		Page:    int64(page),
 		Limit:   int64(limit),
 		Country: country,
@@ -78,15 +87,21 @@ func (c *Client) List(ctx context.Context, page, limit int, country string) (*do
 
 	resp, err := c.client.List(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list users: %w", err)
+		return nil, fmt.Errorf("list users: %w", err)
 	}
 
-	users := make([]storage.User, len(resp.GetUsers()))
+	users := make([]dto.User, len(resp.GetUsers()))
+
 	for i, u := range resp.GetUsers() {
-		users[i] = domain.UserToStorage(*protoToUser(u))
+		user, err := dto.UserFromProto(u)
+		if err != nil {
+			return nil, fmt.Errorf("list users: %w", err)
+		}
+
+		users[i] = *user
 	}
 
-	userList := domain.UserList{
+	userList := dto.UserList{
 		TotalCount: int(resp.GetTotalCount()),
 		NextPage:   int(resp.GetNextPage()),
 		Users:      users,
@@ -95,8 +110,8 @@ func (c *Client) List(ctx context.Context, page, limit int, country string) (*do
 	return &userList, nil
 }
 
-func (c *Client) Update(ctx context.Context, update domain.UserUpdate) (*domain.User, error) {
-	req := &usergrpc.UserUpdate{
+func (c *Client) Update(ctx context.Context, update dto.UserUpdate) (*dto.User, error) {
+	req := &proto.UserUpdate{
 		Id:        update.ID.String(),
 		FirstName: update.FirstName,
 		LastName:  update.LastName,
@@ -108,14 +123,19 @@ func (c *Client) Update(ctx context.Context, update domain.UserUpdate) (*domain.
 
 	resp, err := c.client.Update(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to update user: %w", err)
+		return nil, fmt.Errorf("update user: %w", err)
 	}
 
-	return protoToUser(resp), nil
+	user, err := dto.UserFromProto(resp)
+	if err != nil {
+		return nil, fmt.Errorf("update user: %w", err)
+	}
+
+	return user, nil
 }
 
 func (c *Client) Delete(ctx context.Context, id uuid.UUID) error {
-	req := &usergrpc.UserID{
+	req := &proto.UserID{
 		Id: id.String(),
 	}
 
@@ -125,19 +145,4 @@ func (c *Client) Delete(ctx context.Context, id uuid.UUID) error {
 	}
 
 	return nil
-}
-
-func protoToUser(user *usergrpc.User) *domain.User {
-	id, _ := uuid.Parse(user.GetId())
-
-	return &domain.User{
-		ID:        id,
-		FirstName: user.GetFirstName(),
-		LastName:  user.GetLastName(),
-		Nickname:  user.GetNickname(),
-		Email:     user.GetEmail(),
-		Country:   user.GetCountry(),
-		CreatedAt: user.GetCreatedAt().AsTime(),
-		UpdatedAt: user.GetUpdatedAt().AsTime(),
-	}
 }

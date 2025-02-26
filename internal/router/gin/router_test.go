@@ -181,16 +181,14 @@ func TestUser_list(t *testing.T) {
 			country  = "GB"
 		)
 
-		listUsers := domain.UserList(
-			storage.UserList{
-				Users:      make([]storage.User, 0, numUsers),
-				TotalCount: numUsers,
-				NextPage:   -1,
-			},
-		)
+		listUsers := domain.UserList{
+			Users:      make([]domain.User, 0, numUsers),
+			TotalCount: numUsers,
+			NextPage:   -1,
+		}
 
 		for range numUsers {
-			user := storage.User{
+			user := domain.User{
 				ID:        uuid.New(),
 				FirstName: "John",
 				LastName:  "Doe",

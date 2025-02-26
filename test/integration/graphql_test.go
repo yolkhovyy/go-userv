@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	usergraphql "github.com/yolkhovyy/user/client/user-graphql"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	gqlclient "github.com/yolkhovyy/user/client/user-graphql"
+	"github.com/yolkhovyy/user/contract/dto"
 )
 
 type testCaseGraphQL struct {
@@ -23,7 +23,7 @@ type testCaseGraphQL struct {
 }
 type testSuiteGraphQL struct {
 	suite.Suite
-	client        *usergraphql.Client
+	client        *gqlclient.Client
 	testCases     []testCaseGraphQL
 	createCountry string
 	updateCountry string
@@ -35,7 +35,7 @@ func TestGraphQLSuiteRun(t *testing.T) {
 }
 
 func (s *testSuiteGraphQL) SetupSuite() {
-	s.client = usergraphql.NewClient("http://localhost:8081")
+	s.client = gqlclient.NewClient("http://localhost:8081")
 	s.testCases = []testCaseGraphQL{
 		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
 		{name: "GetUpdateDeleteUser", testFunc: s.getUpdateDeleteUser, numUsers: 100},
@@ -68,7 +68,7 @@ func (s *testSuiteGraphQL) TestGraphQL() {
 
 func (s *testSuiteGraphQL) createUsers(t *testing.T, tcase testCaseGraphQL) {
 	for i := 0; i < tcase.numUsers; i++ {
-		userInput := domain.UserInput{
+		userInput := dto.UserInput{
 			FirstName: fmt.Sprintf("GraphQL"),
 			LastName:  fmt.Sprintf("User, %d", i),
 			Nickname:  fmt.Sprintf("graphqluser%d", i),
@@ -115,9 +115,9 @@ func (s *testSuiteGraphQL) getUpdateDeleteUser(t *testing.T, tcase testCaseGraph
 	user, err := s.client.Get(context.Background(), oneUser.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, user)
-	assert.Equal(t, domain.UserFromStorage(oneUser), *user)
+	assert.Equal(t, oneUser, *user)
 
-	userUpdate := domain.UserUpdate{
+	userUpdate := dto.UserUpdate{
 		ID:        user.ID,
 		FirstName: "GraphQL",
 		LastName:  "User",
