@@ -31,13 +31,13 @@ func (c *Config) Load(
 }
 
 func defaults() map[string]any {
+	const (
+		defaultGRPCPort   = 50501
+		defaultRouterMode = "release"
+	)
+
 	return map[string]any{
 		"GRPC.Port":            defaultGRPCPort,
 		"GRPC.ShutdownTimeout": defaultRouterMode,
 	}
 }
-
-const (
-	defaultGRPCPort   = 50501
-	defaultRouterMode = "release"
-)

@@ -32,6 +32,13 @@ func (c *Config) Load(
 }
 
 func defaults() map[string]any {
+	const (
+		defaultHTTPPort              = 8080
+		defaultHTTPShutdownTimeout   = 5 * time.Second
+		defaultHTTPReadHeaderTimeout = 1 * time.Second
+		defaultRouterMode            = "release"
+	)
+
 	return map[string]any{
 		"HTTP.Port":              defaultHTTPPort,
 		"HTTP.ShutdownTimeout":   defaultHTTPShutdownTimeout,
@@ -39,10 +46,3 @@ func defaults() map[string]any {
 		"Router.Mode":            defaultRouterMode,
 	}
 }
-
-const (
-	defaultHTTPPort              = 8080
-	defaultHTTPShutdownTimeout   = 5 * time.Second
-	defaultHTTPReadHeaderTimeout = 1 * time.Second
-	defaultRouterMode            = "release"
-)

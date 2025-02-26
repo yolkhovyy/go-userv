@@ -1,12 +1,11 @@
 ---
 postgres:
-  host: postgres
+  host: localhost
   port: 5432
   database: postgres
   username: postgres
   password: postgres
-  enableNotifier: true
 
 kafka:
   brokers:
-    - kafka:9092
+    - localhost:9092

@@ -29,5 +29,21 @@ func (c *Config) Load(
 }
 
 func defaults() map[string]any {
-	return map[string]any{}
+	const (
+		defaultPostgresHost     = "localhost"
+		defaultPostgresPort     = 5432
+		defaultPostgresDatabase = "postgres"
+		defaultPostgresUsername = "postgres"
+		defaultPostgresPassword = "postgres"
+		defaultKafkaBrokers     = "localhost:9092"
+	)
+
+	return map[string]any{
+		"Postrgres.Host":     defaultPostgresHost,
+		"Postrgres.Port":     defaultPostgresPort,
+		"Postrgres.Database": defaultPostgresDatabase,
+		"Postrgres.Username": defaultPostgresUsername,
+		"Postrgres.Password": defaultPostgresPassword,
+		"Kafka.Brokers":      defaultKafkaBrokers,
+	}
 }

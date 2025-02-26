@@ -33,7 +33,7 @@ func run() int {
 	flag.Parse()
 
 	// Service configuration.
-	config := Config{}
+	config := NewConfig()
 
 	err := config.Load(*configFile, domainName)
 	if err != nil {
