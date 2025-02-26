@@ -11,8 +11,7 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/rs/zerolog v1.27.0
 	github.com/stretchr/testify v1.10.0
-	github.com/yolkhovyy/go-utilities v0.2.4
-	google.golang.org/grpc v1.67.1
+	google.golang.org/grpc v1.70.0
 )
 
 require (
@@ -29,7 +28,7 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.35.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240826202546-f6391c0de4c7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241202173237-19429a94021a // indirect
 )
 
 require (
@@ -66,6 +65,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	github.com/yolkhovyy/go-utilities v0.2.4
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
 	golang.org/x/sys v0.30.0 // indirect

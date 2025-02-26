@@ -13,11 +13,15 @@ type Config struct {
 	Kafka    notifier.Config `yaml:"kafka" mapstructure:"Kafka"`
 }
 
+func NewConfig() *Config {
+	return &Config{}
+}
+
 func (c *Config) Load(
 	configFile string,
 	prefix string,
 ) error {
-	if err := config.Load(configFile, prefix, nil, defaults(), c); err != nil {
+	if err := config.Load(configFile, prefix, defaults(), c); err != nil {
 		return fmt.Errorf("load config: %w", err)
 	}
 

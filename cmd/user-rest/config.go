@@ -16,11 +16,15 @@ type Config struct {
 	Router   router.Config  `yaml:"router" mapstructure:"Router"`
 }
 
+func NewConfig() *Config {
+	return &Config{}
+}
+
 func (c *Config) Load(
 	configFile string,
 	prefix string,
 ) error {
-	if err := config.Load(configFile, prefix, nil, defaults(), c); err != nil {
+	if err := config.Load(configFile, prefix, defaults(), c); err != nil {
 		return fmt.Errorf("load config: %w", err)
 	}
 

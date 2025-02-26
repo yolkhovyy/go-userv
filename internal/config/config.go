@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/yolkhovyy/go-utilities/viperx"
 )
@@ -10,11 +9,10 @@ import (
 func Load(
 	configFile string,
 	prefix string,
-	replacer *strings.Replacer,
 	defaults map[string]any,
 	config any,
 ) error {
-	vprx := viperx.New(configFile, prefix, replacer)
+	vprx := viperx.New(configFile, prefix, nil)
 
 	vprx.SetDefaults(defaults)
 
