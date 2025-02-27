@@ -27,6 +27,7 @@ Provides:
 * GNU Make 4.3
 * Docker 27.5.1
 * jq 1.6
+* graphviz 2.43.0
 
 ### Dependencies
 * PostgreSQL - for storing user data
@@ -53,7 +54,7 @@ Provides:
 
 ### Used Go Modules
 * [Zerolog](https://pkg.go.dev/github.com/rs/zerolog) for logging
-* [Viper](https://pkg.go.dev/github.com/spf13/viper) for configuration
+* [Viper](https://pkg.go.dev/github.com/spf13/viper) and [Viperx](https://github.com/yolkhovyy/go-utilities/tree/main/viperx) for configuration
 * [Gin](https://pkg.go.dev/github.com/gin-gonic/gin@v1.8.1) for HTTP routing
 * [Pgx](https://pkg.go.dev/github.com/jackc/pgx/v5) and [Pq](https://pkg.go.dev/github.com/lib/pq) PostgreSQL drivers for storage and notifications
 * [Kafka](https://pkg.go.dev/github.com/segmentio/kafka-go) client for publishing notifications
@@ -74,52 +75,36 @@ go-userv
 │       ├── config.yml
 │       ├── Dockerfile
 │       └── main.go
-├── coverage
-│   └── *.html, *.xml
 ├── db
 │   └── postgres
 │       ├── migrations
-│       │   └── *.sql
 │       └── init.sql
-├── docs
-│   └── diagrams
-│       └── *.puml, *.png
 ├── contract
 │   ├── dto
 │   │   └── *.go
+│   ├── graphql
+│   │   └── *.graphql
 │   └── proto
 │       └── *.proto, *.pb.go
 ├── internal
 │   ├── contract
 │   │   ├── domain
-│   │   │   └── *.go
 │   │   ├── server
-│   │   │   └── *.go
 │   │   └── storage
-│   │       └── *.go
 │   ├── domain
-│   │   └── *.go
 │   ├── notifier
-│   │   └── *.go
 │   ├── router
 │   │   ├── grpc
-│   │   │   └── *.go
 │   │   └── http
-│   │       └── *.go
 │   ├── server
 │   │   ├── grpc
-│   │   │   └── *.go
 │   │   └── http
-│   │       └── *.go
 │   └── storage
 │       └── postgres
-│           └── *.go
 ├── make
 │   └── *.mk
-├── results
-│   └── *.xml
-├── scripts
-│   └── *.sh
+├── test
+│   └── integration
 ├── docker-compose.yml
 ├── go.mod
 ├── go.sum
@@ -165,14 +150,22 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
   ```bash
   make test
   ```
-  * Currently limited to [router unit tests](./internal/gin/router/router_test.go)
+  * Runs:
+    * Router [unit tests](./internal/gin/router/router_test.go)
+    * REST, gRPC, GraphQL [integration tests](./test/integration/)
   * Generates test [results](./results/unit-tests.xml) in JUnit XML Format, ready to be consumed by CI/CD pipelines, e.g. Jenkins, GitLab CI/CD, CircleCI, Azure DevOps, etc.
 
 * Make coverage report
   ```bash
   make coverage
   ```
-  * This generates a coverage [report](./coverage/total.html) in HTML format, try to open it in a browser
+  * This generates a [coverage report](./coverage/total.html) in HTML format, try to open it in a browser
+
+* Generate dependency graph
+  ```bash
+  make deps
+  ```
+  * Generates dependency graph in [docs/dep-*.*](./docs/).
 
 * Build docker images
   ```bash
@@ -212,7 +205,7 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
 * Kafka consumer
   In 2nd terminal
   ```bash
-  ./scripts/kafka-consumer.sh
+  ./test/scripts/kafka-consumer.sh
   ```
   * This allows to observe user changes
 
@@ -220,11 +213,11 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
   In 3rd terminal:
   * REST - use UUID from the output of `list-users.sh`
     ```bash
-    ./scripts/create-users.sh
-    ./scripts/list-users.sh 
-    ./scripts/get-user.sh UUID 
-    ./scripts/update-user.sh UUID 
-    ./scripts/delete-user.sh UUID
+    ./test/scripts/create-users.sh
+    ./test/scripts/list-users.sh 
+    ./test/scripts/get-user.sh UUID 
+    ./test/scripts/update-user.sh UUID 
+    ./test/scripts/delete-user.sh UUID
     ```
   * [gRPC](./contract/proto/GRPC.md)
   * [GraphQL](./contract/graphql/GRAPHQL.md)
@@ -254,7 +247,6 @@ The service build system is constructed with [GNU Make](https://www.gnu.org/soft
   * Returns health status of the User Service
 
 ### TODO
-* Snyk
 * More unit tests
 * API annotaions and documentation
 * Telemetry

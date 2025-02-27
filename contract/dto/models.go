@@ -1,10 +1,6 @@
 package dto
 
 import (
-	"fmt"
-
-	"github.com/google/uuid"
-	"github.com/yolkhovyy/user/contract/proto"
 	"github.com/yolkhovyy/user/internal/contract/domain"
 )
 
@@ -30,10 +26,6 @@ func UserToDomain(user User) domain.User {
 	return domain.User(user)
 }
 
-// func UserToStorage(user User) storage.User {
-// 	return storage.User(user)
-// }
-
 func UserInputToDomain(userInput UserInput) domain.UserInput {
 	return domain.UserInput(userInput)
 }
@@ -50,10 +42,6 @@ func UserListFromDomain(userList domain.UserList) UserList {
 	}
 }
 
-// func UserListToDomain(userList UserList) domain.UserList {
-// 	return domain.UserList(userList)
-// }
-
 func UsersFromDomain(domainUsers []domain.User) []User {
 	users := make([]User, len(domainUsers))
 
@@ -63,22 +51,4 @@ func UsersFromDomain(domainUsers []domain.User) []User {
 	}
 
 	return users
-}
-
-func UserFromProto(user *proto.User) (*User, error) {
-	userID, err := uuid.Parse(user.GetId())
-	if err != nil {
-		return nil, fmt.Errorf("user from proto: %w", err)
-	}
-
-	return &User{
-		ID:        userID,
-		FirstName: user.GetFirstName(),
-		LastName:  user.GetLastName(),
-		Nickname:  user.GetNickname(),
-		Email:     user.GetEmail(),
-		Country:   user.GetCountry(),
-		CreatedAt: user.GetCreatedAt().AsTime(),
-		UpdatedAt: user.GetUpdatedAt().AsTime(),
-	}, nil
 }

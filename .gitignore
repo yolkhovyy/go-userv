@@ -7,9 +7,10 @@
 # mockery
 **/mock_*.go
 
-# Generated folders
+# Generated folders and files
 coverage/
 results/
+docs/dep-*.*
 
 # Keep secrets local
 .env

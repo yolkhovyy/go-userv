@@ -52,7 +52,7 @@ func (c *Client) Create(ctx context.Context, input dto.UserInput) (*dto.User, er
 		return nil, fmt.Errorf("create user: %w", err)
 	}
 
-	user, err := dto.UserFromProto(resp)
+	user, err := dtoUserFromProto(resp)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
 	}
@@ -70,7 +70,7 @@ func (c *Client) Get(ctx context.Context, id uuid.UUID) (*dto.User, error) {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
-	user, err := dto.UserFromProto(resp)
+	user, err := dtoUserFromProto(resp)
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}
@@ -93,7 +93,7 @@ func (c *Client) List(ctx context.Context, page, limit int, country string) (*dt
 	users := make([]dto.User, len(resp.GetUsers()))
 
 	for i, u := range resp.GetUsers() {
-		user, err := dto.UserFromProto(u)
+		user, err := dtoUserFromProto(u)
 		if err != nil {
 			return nil, fmt.Errorf("list users: %w", err)
 		}
@@ -126,7 +126,7 @@ func (c *Client) Update(ctx context.Context, update dto.UserUpdate) (*dto.User, 
 		return nil, fmt.Errorf("update user: %w", err)
 	}
 
-	user, err := dto.UserFromProto(resp)
+	user, err := dtoUserFromProto(resp)
 	if err != nil {
 		return nil, fmt.Errorf("update user: %w", err)
 	}

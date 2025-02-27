@@ -13,6 +13,7 @@ install-tools: ## Install required project tools
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 	@go install github.com/99designs/gqlgen@latest
+	@go install github.com/loov/goda@latest
 
 .PHONY: install-git-hooks
 install-git-hooks: ## Install git hooks

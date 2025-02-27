@@ -9,11 +9,11 @@ all: install lint test build run ## Install, lint, test, coverage, build and run
 .PHONY: install
 install: install-env install-tools install-git-hooks ## Install project
 
-.PHONY: lint ## Lint the project
-lint: lint-go
+.PHONY: lint
+lint: lint-go ## Lint the project
 
-.PHONY: test ## Run tests
-test: unit-test integration-test coverage
+.PHONY: test
+test: unit-test integration-test coverage ## Run tests
 
 .PHONY: build
 build: dc-build ## Build docker image
