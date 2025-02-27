@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-utilities/osx"
 	"github.com/yolkhovyy/user/internal/domain"
 	"github.com/yolkhovyy/user/internal/logger"
 	grpcrouter "github.com/yolkhovyy/user/internal/router/grpc"
@@ -39,7 +40,7 @@ func run() int {
 	if err != nil {
 		log.Error().Err(err).Msg("config load")
 
-		return 1
+		return osx.ExitConfigError
 	}
 
 	// The ctx.Done() channel will close when one of the signals arrives.
@@ -51,7 +52,7 @@ func run() int {
 	if err != nil {
 		log.Error().Err(err).Msg("domain initialization")
 
-		return 1
+		return osx.ExitFailure
 	}
 
 	defer func() {
@@ -68,10 +69,10 @@ func run() int {
 	if err := grpcServer.Run(ctx); err != nil {
 		log.Error().Err(err).Msg("grpc server")
 
-		return 1
+		return osx.ExitFailure
 	}
 
 	log.Info().Msg("exiting")
 
-	return 0
+	return osx.ExitSuccess
 }
