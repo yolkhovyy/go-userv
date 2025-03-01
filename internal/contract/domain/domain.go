@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/google/uuid"
-	"github.com/yolkhovyy/user/internal/contract/storage"
+	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 	"golang.org/x/crypto/bcrypt"
 )
 

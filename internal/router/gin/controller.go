@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 type Controller struct {

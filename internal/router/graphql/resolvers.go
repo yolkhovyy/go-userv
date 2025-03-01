@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 var (

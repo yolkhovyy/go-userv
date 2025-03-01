@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/rs/zerolog/log"
-	cserver "github.com/yolkhovyy/user/internal/contract/server"
+	cserver "github.com/yolkhovyy/go-userv/internal/contract/server"
 )
 
 type Server struct {

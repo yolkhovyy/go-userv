@@ -8,7 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog/log"
-	"github.com/yolkhovyy/user/internal/contract/storage"
+	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 )
 
 type Controller struct {

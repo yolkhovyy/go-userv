@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/internal/domain"
+	"github.com/yolkhovyy/go-userv/internal/logger"
+	grpcrouter "github.com/yolkhovyy/go-userv/internal/router/grpc"
+	grpcserver "github.com/yolkhovyy/go-userv/internal/server/grpc"
 	"github.com/yolkhovyy/go-utilities/osx"
-	"github.com/yolkhovyy/user/internal/domain"
-	"github.com/yolkhovyy/user/internal/logger"
-	grpcrouter "github.com/yolkhovyy/user/internal/router/grpc"
-	grpcserver "github.com/yolkhovyy/user/internal/server/grpc"
 )
 
 const (

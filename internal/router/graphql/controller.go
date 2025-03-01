@@ -6,7 +6,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 type Controller struct {

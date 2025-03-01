@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	"github.com/yolkhovyy/user/contract/proto"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/contract/proto"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 type Controller struct {

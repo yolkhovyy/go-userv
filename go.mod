@@ -1,4 +1,4 @@
-module github.com/yolkhovyy/user
+module github.com/yolkhovyy/go-userv
 
 go 1.23
 

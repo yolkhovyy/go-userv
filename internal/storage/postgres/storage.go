@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"github.com/rs/zerolog/log"
-	"github.com/yolkhovyy/user/internal/contract/storage"
+	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 )
 
 func (c *Controller) Create(ctx context.Context, user storage.UserInput) (*storage.User, error) {

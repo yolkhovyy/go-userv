@@ -9,8 +9,8 @@ import (
 	"github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
-	"github.com/yolkhovyy/user/internal/contract/server"
-	storage "github.com/yolkhovyy/user/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/contract/server"
+	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
 	"golang.org/x/sync/semaphore"
 )
 

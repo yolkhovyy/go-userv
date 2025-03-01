@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/yolkhovyy/user/internal/config"
-	router "github.com/yolkhovyy/user/internal/router/grpc"
-	server "github.com/yolkhovyy/user/internal/server/grpc"
-	storage "github.com/yolkhovyy/user/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/config"
+	router "github.com/yolkhovyy/go-userv/internal/router/grpc"
+	server "github.com/yolkhovyy/go-userv/internal/server/grpc"
+	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Config struct {

@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	gqlclient "github.com/yolkhovyy/user/client/user-graphql"
-	"github.com/yolkhovyy/user/contract/dto"
+	gqlclient "github.com/yolkhovyy/go-userv/client/user-graphql"
+	"github.com/yolkhovyy/go-userv/contract/dto"
 )
 
 type testCaseGraphQL struct {

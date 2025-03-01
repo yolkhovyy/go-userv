@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/yolkhovyy/user/contract/dto"
+	"github.com/yolkhovyy/go-userv/contract/dto"
 )
 
 // GraphQL client for the user-graphql service.

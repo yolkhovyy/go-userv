@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/yolkhovyy/user/contract/dto"
+	"github.com/yolkhovyy/go-userv/contract/dto"
 )
 
 // REST client for the user-rest service.

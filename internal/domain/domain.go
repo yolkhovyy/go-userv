@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*domain.User, error) {

@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/internal/domain"
+	"github.com/yolkhovyy/go-userv/internal/logger"
+	router "github.com/yolkhovyy/go-userv/internal/router/gin"
+	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
 	"github.com/yolkhovyy/go-utilities/osx"
-	"github.com/yolkhovyy/user/internal/domain"
-	"github.com/yolkhovyy/user/internal/logger"
-	router "github.com/yolkhovyy/user/internal/router/gin"
-	httpserver "github.com/yolkhovyy/user/internal/server/http"
 )
 
 const (

@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/internal/domain"
+	"github.com/yolkhovyy/go-userv/internal/logger"
+	graphqlrouter "github.com/yolkhovyy/go-userv/internal/router/graphql"
+	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
 	"github.com/yolkhovyy/go-utilities/osx"
-	"github.com/yolkhovyy/user/internal/domain"
-	"github.com/yolkhovyy/user/internal/logger"
-	graphqlrouter "github.com/yolkhovyy/user/internal/router/graphql"
-	httpserver "github.com/yolkhovyy/user/internal/server/http"
 )
 
 const (

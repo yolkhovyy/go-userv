@@ -7,9 +7,9 @@ import (
 	empty "github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/yolkhovyy/user/contract/dto"
-	"github.com/yolkhovyy/user/contract/proto"
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/contract/dto"
+	"github.com/yolkhovyy/go-userv/contract/proto"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

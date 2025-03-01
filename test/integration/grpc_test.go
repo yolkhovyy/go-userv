@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	grpcclient "github.com/yolkhovyy/user/client/user-grpc"
-	"github.com/yolkhovyy/user/contract/dto"
+	grpcclient "github.com/yolkhovyy/go-userv/client/user-grpc"
+	"github.com/yolkhovyy/go-userv/contract/dto"
 )
 
 type testCaseGRPC struct {

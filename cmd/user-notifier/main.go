@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/internal/logger"
+	"github.com/yolkhovyy/go-userv/internal/notifier"
 	"github.com/yolkhovyy/go-utilities/osx"
-	"github.com/yolkhovyy/user/internal/logger"
-	"github.com/yolkhovyy/user/internal/notifier"
 )
 
 const (

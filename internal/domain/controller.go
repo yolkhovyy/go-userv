@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yolkhovyy/user/internal/contract/domain"
-	storagec "github.com/yolkhovyy/user/internal/contract/storage"
-	storage "github.com/yolkhovyy/user/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
+	storagec "github.com/yolkhovyy/go-userv/internal/contract/storage"
+	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Controller struct {

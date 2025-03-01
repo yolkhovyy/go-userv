@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	restclient "github.com/yolkhovyy/user/client/user-rest"
-	"github.com/yolkhovyy/user/contract/dto"
+	restclient "github.com/yolkhovyy/go-userv/client/user-rest"
+	"github.com/yolkhovyy/go-userv/contract/dto"
 )
 
 type testCaseRest struct {

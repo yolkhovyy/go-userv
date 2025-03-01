@@ -13,8 +13,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/yolkhovyy/user/internal/contract/domain"
-	"github.com/yolkhovyy/user/internal/contract/storage"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 )
 
 func TestUser_create(t *testing.T) {

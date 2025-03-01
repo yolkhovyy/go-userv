@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/rs/zerolog/log"
-	"github.com/yolkhovyy/user/contract/proto"
-	"github.com/yolkhovyy/user/internal/contract/server"
+	"github.com/yolkhovyy/go-userv/contract/proto"
+	"github.com/yolkhovyy/go-userv/internal/contract/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

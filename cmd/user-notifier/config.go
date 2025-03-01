@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/yolkhovyy/user/internal/config"
-	"github.com/yolkhovyy/user/internal/notifier"
-	storage "github.com/yolkhovyy/user/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/config"
+	"github.com/yolkhovyy/go-userv/internal/notifier"
+	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Config struct {

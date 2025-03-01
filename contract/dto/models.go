@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/yolkhovyy/user/internal/contract/domain"
+	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
 // TODO: Replace these by dedicated DTO types if needed.
