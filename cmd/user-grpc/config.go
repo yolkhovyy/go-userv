@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/yolkhovyy/go-userv/internal/config"
-	router "github.com/yolkhovyy/go-userv/internal/router/grpc"
-	server "github.com/yolkhovyy/go-userv/internal/server/grpc"
-	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
+	grpcrouter "github.com/yolkhovyy/go-userv/internal/router/grpc"
+	grpcserver "github.com/yolkhovyy/go-userv/internal/server/grpc"
+	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Config struct {
-	GRPC     server.Config  `yaml:"grpc" mapstructure:"GRPC"`
-	Postgres storage.Config `yaml:"postgres" mapstructure:"Postgres"`
-	Router   router.Config  `yaml:"router" mapstructure:"Router"`
+	GRPC     grpcserver.Config `yaml:"grpc" mapstructure:"GRPC"`
+	Router   grpcrouter.Config `yaml:"router" mapstructure:"Router"`
+	Postgres postgres.Config   `yaml:"postgres" mapstructure:"Postgres"`
 }
 
 func NewConfig() *Config {

@@ -61,12 +61,12 @@ func run() int {
 		}
 	}()
 
-	// Create router.
+	// Create grpc router.
 	router := grpcrouter.New(config.Router, domain)
 
-	// Create and run gRPC grpcServer.
-	grpcServer := grpcserver.New(config.GRPC, router, grpcrouter.Interceptors()...)
-	if err := grpcServer.Run(ctx); err != nil {
+	// Create and run gRPC server.
+	server := grpcserver.New(config.GRPC, router, grpcrouter.Interceptors()...)
+	if err := server.Run(ctx); err != nil {
 		log.Error().Err(err).Msg("grpc server")
 
 		return osx.ExitFailure

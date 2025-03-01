@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/yolkhovyy/go-userv/internal/contract/server"
-	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -20,9 +20,9 @@ type Controller struct {
 }
 
 //nolint:ireturn
-func New(storageConfig storage.Config, kafkaConfig Config) (server.Contract, error) {
+func New(config postgres.Config, kafkaConfig Config) (server.Contract, error) {
 	// Listener captures user changes in storage.
-	listener, err := Connect(storageConfig)
+	listener, err := Connect(config)
 	if err != nil {
 		return nil, fmt.Errorf("storage listener: %w", err)
 	}

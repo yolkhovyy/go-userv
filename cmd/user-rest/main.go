@@ -9,7 +9,7 @@ import (
 
 	"github.com/yolkhovyy/go-userv/internal/domain"
 	"github.com/yolkhovyy/go-userv/internal/logger"
-	router "github.com/yolkhovyy/go-userv/internal/router/gin"
+	ginrouter "github.com/yolkhovyy/go-userv/internal/router/gin"
 	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
 	"github.com/yolkhovyy/go-utilities/osx"
 )
@@ -61,8 +61,8 @@ func run() int {
 		}
 	}()
 
-	// Create router.
-	router := router.New(config.Router, domain)
+	// Create gin router.
+	router := ginrouter.New(config.Router, domain)
 
 	// Create and run HTTP server.
 	server := httpserver.New(config.HTTP, router.Handler())

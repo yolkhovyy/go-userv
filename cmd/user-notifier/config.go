@@ -5,12 +5,12 @@ import (
 
 	"github.com/yolkhovyy/go-userv/internal/config"
 	"github.com/yolkhovyy/go-userv/internal/notifier"
-	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Config struct {
-	Postgres storage.Config  `yaml:"postgres" mapstructure:"Postgres"`
 	Kafka    notifier.Config `yaml:"kafka" mapstructure:"Kafka"`
+	Postgres postgres.Config `yaml:"postgres" mapstructure:"Postgres"`
 }
 
 func NewConfig() *Config {

@@ -5,15 +5,15 @@ import (
 	"time"
 
 	"github.com/yolkhovyy/go-userv/internal/config"
-	router "github.com/yolkhovyy/go-userv/internal/router/gin"
-	"github.com/yolkhovyy/go-userv/internal/server/http"
-	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
+	ginrouter "github.com/yolkhovyy/go-userv/internal/router/gin"
+	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
+	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Config struct {
-	HTTP     http.Config    `yaml:"http" mapstructure:"HTTP"`
-	Postgres storage.Config `yaml:"postgres" mapstructure:"Postgres"`
-	Router   router.Config  `yaml:"router" mapstructure:"Router"`
+	HTTP     httpserver.Config `yaml:"http" mapstructure:"HTTP"`
+	Router   ginrouter.Config  `yaml:"router" mapstructure:"Router"`
+	Postgres postgres.Config   `yaml:"postgres" mapstructure:"Postgres"`
 }
 
 func NewConfig() *Config {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/yolkhovyy/go-userv/internal/domain"
 	"github.com/yolkhovyy/go-userv/internal/logger"
-	graphqlrouter "github.com/yolkhovyy/go-userv/internal/router/graphql"
+	gqlrouter "github.com/yolkhovyy/go-userv/internal/router/graphql"
 	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
 	"github.com/yolkhovyy/go-utilities/osx"
 )
@@ -61,8 +61,8 @@ func run() int {
 		}
 	}()
 
-	// Create router.
-	router, err := graphqlrouter.New(config.Router, domain)
+	// Create graphq router.
+	router, err := gqlrouter.New(config.Router, domain)
 	if err != nil {
 		log.Error().Err(err).Msg("router creation")
 

@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	storage "github.com/yolkhovyy/go-userv/internal/storage/postgres"
+	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )
 
 type Listener struct {
 	*pq.Listener
 }
 
-func Connect(config storage.Config) (*Listener, error) {
+func Connect(config postgres.Config) (*Listener, error) {
 	// TODO: fix sslmode
 	connString := "postgres://" +
 		config.Username + ":" +

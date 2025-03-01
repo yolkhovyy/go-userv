@@ -51,8 +51,6 @@ func (c *Controller) Update(ctx context.Context, user storage.UserUpdate) (*stor
 	updatedUser := storage.User{}
 	if err := row.Scan(&updatedUser.ID, &updatedUser.FirstName, &updatedUser.LastName, &updatedUser.Nickname,
 		&updatedUser.Email, &updatedUser.Country, &updatedUser.CreatedAt, &updatedUser.UpdatedAt); err != nil {
-		log.Error().Err(err).Msg("=============================== 21")
-
 		return nil, fmt.Errorf("update user: %w", err)
 	}
 

@@ -3,10 +3,17 @@
 .PHONY: deps
 deps: check-goda check-graphviz ## Generate dependency graph/tree
 	@echo "🔍 Generating dependency graph"
-	@goda graph ./... > docs/dep-graph.dot
+	@goda graph -cluster ./... > docs/dep-graph.dot
+	@sed -i \
+		-e 's|github.com/yolkhovyy/go-userv/||g' \
+		-e 's|href="https://pkg\.go\.dev/[^"]\+"||g' \
+		docs/dep-graph.dot
 	@dot -Tpng docs/dep-graph.dot -o docs/dep-graph.png
 	@echo "🔍 Generating dependency tree"
 	@goda tree ./... > docs/dep-tree.txt
+	@sed -i \
+		-e 's|github.com/yolkhovyy/go-userv/||g' \
+		docs/dep-tree.txt
 
 .PHONY: check-graphviz
 check-graphviz:
