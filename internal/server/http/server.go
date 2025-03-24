@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"strconv"
 
-	"github.com/rs/zerolog/log"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
 	cserver "github.com/yolkhovyy/go-userv/internal/contract/server"
 )
 
@@ -30,10 +31,13 @@ func New(config Config, handler http.Handler) cserver.Contract {
 }
 
 func (s *Server) Run(ctx context.Context) error {
+	logger := slogw.DefaultLogger()
+
 	errChan := make(chan error)
 
 	go func() {
-		log.Info().Msgf("http server starting on %s", s.Server.Addr)
+		logger.InfoContext(ctx, "http server starting",
+			slog.String("addr", s.Server.Addr))
 
 		if err := s.Server.ListenAndServe(); err != nil {
 			errChan <- err
@@ -50,7 +54,7 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 	}
 
-	log.Debug().Msg("http server shutting down")
+	logger.DebugContext(ctx, "http server shutting down")
 
 	ctx, timeout := context.WithTimeout(ctx, s.config.ShutdownTimeout)
 	defer timeout()
@@ -59,7 +63,7 @@ func (s *Server) Run(ctx context.Context) error {
 		return fmt.Errorf("http server shutdown: %w", err)
 	}
 
-	log.Trace().Msg("http server shutdown complete")
+	logger.DebugContext(ctx, "http server shutting down complete")
 
 	return nil
 }

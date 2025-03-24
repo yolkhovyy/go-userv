@@ -1,14 +1,5 @@
 PROJECT_NAME ?= $(notdir $(shell pwd))
 
-DOCO = docker compose
-
-export COMPOSE_DOCKER_CLI_BUILD = 1
-export DOCKER_BUILDKIT = 1
-export COMPOSE_BAKE = true
-
-export DEPENDENCIES = postgres zookeeper kafka kafka-initializer
-export SERVICES = $(filter-out ${DEPENDENCIES}, $(shell ${DOCO} config --services))
-
 ## Docker compose:
 
 .PHONY: doco-up-dependencies

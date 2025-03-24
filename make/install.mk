@@ -27,3 +27,6 @@ install-git-hooks: ## Install git hooks
 install-env:
 	@echo "🛠️ Installing .env"
 	@cp .env.local .env
+	@if [ -f .env.secrets ]; then \
+		cat .env.secrets >> .env; \
+	fi
