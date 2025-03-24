@@ -53,7 +53,7 @@ Provides:
 * [Notifier](./internal/notifier/controller.go) - user changes notifier
 
 ### Used Go Modules
-* [Zerolog](https://pkg.go.dev/github.com/rs/zerolog) for logging
+* [Go-otelw](https://github.com/yolkhovyy/go-otelw) for telemetry
 * [Viper](https://pkg.go.dev/github.com/spf13/viper) and [Viperx](https://github.com/yolkhovyy/go-utilities/tree/main/viperx) for configuration
 * [Gin](https://pkg.go.dev/github.com/gin-gonic/gin@v1.8.1) for HTTP routing
 * [Pgx](https://pkg.go.dev/github.com/jackc/pgx/v5) and [Pq](https://pkg.go.dev/github.com/lib/pq) PostgreSQL drivers for storage and notifications

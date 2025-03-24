@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"github.com/yolkhovyy/go-otelw/pkg/collector"
+	"github.com/yolkhovyy/go-otelw/pkg/tracew"
 	restclient "github.com/yolkhovyy/go-userv/client/user-rest"
 	"github.com/yolkhovyy/go-userv/contract/dto"
 )
@@ -28,6 +30,7 @@ type testSuiteRest struct {
 	cases         []testCaseRest
 	createCountry string
 	updateCountry string
+	tracer        *tracew.Tracer
 }
 
 func TestRestSuiteRun(t *testing.T) {
@@ -36,6 +39,19 @@ func TestRestSuiteRun(t *testing.T) {
 }
 
 func (s *testSuiteRest) SetupSuite() {
+	var err error
+
+	if s.tracer, err = tracew.Configure(context.Background(), tracew.Config{
+		Enable: true,
+		Collector: collector.Config{
+			Protocol:   collector.GRPC,
+			Connection: "localhost:4317",
+			Insecure:   true,
+		},
+	}, nil); err != nil {
+		panic(err)
+	}
+
 	s.client = restclient.NewClient("http://localhost:8080")
 	s.cases = []testCaseRest{
 		{name: "CreateUsers", testFunc: s.createUsers, numUsers: 100},
@@ -43,12 +59,13 @@ func (s *testSuiteRest) SetupSuite() {
 		{name: "ListUsers", testFunc: s.listUsers, numUsers: 100, pageSize: 12},
 		{name: "DeleteAll", testFunc: s.deleteAllUsers, numUsers: 100},
 	}
+
 	s.createCountry = "XA"
 	s.updateCountry = "XB"
 }
 
 func (s *testSuiteRest) TearDownSuite() {
-	// TODO: tear down suite.
+	_ = s.tracer.Shutdown(context.Background())
 }
 
 func (s *testSuiteRest) SetupTest() {

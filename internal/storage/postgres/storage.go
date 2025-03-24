@@ -3,11 +3,12 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
-	"github.com/georgysavva/scany/pgxscan"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v4"
-	"github.com/rs/zerolog/log"
+	"github.com/jackc/pgx/v5"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
 	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 )
 
@@ -71,6 +72,8 @@ func (c *Controller) Get(ctx context.Context, userID uuid.UUID) (*storage.User, 
 }
 
 func (c *Controller) List(ctx context.Context, page int, limit int, countryCode string) ([]storage.User, int, error) {
+	logger := slogw.DefaultLogger()
+
 	trx, err := c.txBeginRepeatableRead(ctx)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list users transaction: %w", err)
@@ -78,7 +81,9 @@ func (c *Controller) List(ctx context.Context, page int, limit int, countryCode 
 
 	defer func() {
 		if err := trx.Rollback(ctx); err != nil {
-			log.Error().Err(fmt.Errorf("rollback transaction: %w", err)).Msg("list users")
+			logger.ErrorContext(ctx, "transaction",
+				slog.String("rollback", err.Error()),
+			)
 		}
 	}()
 

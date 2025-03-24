@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
+	"github.com/yolkhovyy/go-otelw/pkg/tracew"
 	"github.com/yolkhovyy/go-userv/internal/contract/server"
 	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 	"golang.org/x/sync/semaphore"
@@ -27,7 +29,7 @@ func New(config postgres.Config, kafkaConfig Config) (server.Contract, error) {
 		return nil, fmt.Errorf("storage listener: %w", err)
 	}
 
-	log.Debug().Msg("notifier connected to database")
+	slogw.DefaultLogger().Debug("notifier connected to database")
 
 	// TODO: make kafka params configurable.
 	const (
@@ -61,6 +63,8 @@ func (c *Controller) Run(ctx context.Context) error {
 		rateLimit = 500
 	)
 
+	logger := slogw.DefaultLogger()
+
 	err := c.pqListener.Listen(channel)
 	if err != nil {
 		return fmt.Errorf("notifier listen: %w", err)
@@ -68,7 +72,8 @@ func (c *Controller) Run(ctx context.Context) error {
 
 	defer func() {
 		if err := c.kafkaWriter.Close(); err != nil {
-			log.Error().Err(err).Msg("kafka writer close")
+			logger.ErrorContext(ctx, "notifier",
+				slog.String("kafka writer close", err.Error()))
 		}
 	}()
 
@@ -78,12 +83,14 @@ func (c *Controller) Run(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			if !errors.Is(ctx.Err(), context.Canceled) {
-				log.Error().Err(ctx.Err()).Msg("notifier")
+				logger.ErrorContext(ctx, "notifier",
+					slog.String("context done", ctx.Err().Error()))
 
 				return fmt.Errorf("notifier loop: %w", ctx.Err())
 			}
 
-			log.Trace().Msg("notifier listener exiting")
+			logger.DebugContext(ctx, "notifier",
+				slog.String("listener exiting", ctx.Err().Error()))
 
 			return nil
 
@@ -93,13 +100,22 @@ func (c *Controller) Run(ctx context.Context) error {
 			}
 
 			go func() {
-				err := rateLimiter.Acquire(ctx, 1)
+				var err error
+
+				ctx, span := tracew.Start(ctx, "listener", "notify")
+				defer func() { span.End(err) }()
+
+				logger := slogw.DefaultLogger()
+
+				err = rateLimiter.Acquire(ctx, 1)
 				if errors.Is(err, context.Canceled) {
-					log.Warn().Msg("notifier listener exiting, context cancelled")
+					logger.WarnContext(ctx, "notifier listener exiting, context cancelled")
 
 					return
 				}
 				defer rateLimiter.Release(1)
+
+				span.AddEvent(fmt.Sprintf("writing topic %s %s", topic, notification.Extra))
 
 				err = c.kafkaWriter.WriteMessages(ctx, kafka.Message{
 					Topic: topic,
@@ -109,11 +125,13 @@ func (c *Controller) Run(ctx context.Context) error {
 
 				switch {
 				case errors.Is(err, context.Canceled):
-					log.Warn().Msg("notifier listener exiting, context cancelled")
+					logger.WarnContext(ctx, "notifier listener exiting, context cancelled")
 				case err != nil:
-					log.Error().Err(err).Msg("notifier listener")
+					logger.ErrorContext(ctx, "notifier",
+						slog.String("listener", err.Error()))
 				default:
-					log.Info().Msgf("notifier: %v", notification.Extra)
+					logger.InfoContext(ctx, "notifier",
+						slog.Any("notification extra", notification.Extra))
 				}
 			}()
 		}

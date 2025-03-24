@@ -18,9 +18,15 @@ country="${2:-GB}"
 
 for ((i = 1; i <= num_users; i++)); do
     {
+        TRACE_ID=$(openssl rand -hex 16)
+        SPAN_ID=$(openssl rand -hex 8)
+        TRACE_FLAGS="01"
+        TRACEPARENT="00-${TRACE_ID}-${SPAN_ID}-${TRACE_FLAGS}"
+
         json_payload=$(generate_json_payload "$i" "$country")
 
         response=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:8080/api/v1/user \
+            -H "traceparent: ${TRACEPARENT}" \
             -H "Content-Type: application/json" \
             -d "$json_payload")
 

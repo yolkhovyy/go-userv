@@ -12,7 +12,7 @@ type Controller struct {
 	handler *gin.Engine
 }
 
-func New(config Config, domain domain.Contract) *Controller {
+func New(config Config, domain domain.Contract, handlers ...gin.HandlerFunc) *Controller {
 	controller := Controller{
 		domain: domain,
 	}
@@ -22,6 +22,7 @@ func New(config Config, domain domain.Contract) *Controller {
 	engine := gin.New()
 	engine.RedirectTrailingSlash = false
 	engine.Use(gin.Recovery(), Logger())
+	engine.Use(handlers...)
 
 	// Health check.
 	engine.GET("/health", controller.health)

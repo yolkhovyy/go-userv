@@ -6,14 +6,14 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/rs/zerolog/log"
+	"github.com/exaring/otelpgx"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
 	"github.com/yolkhovyy/go-userv/internal/contract/storage"
 )
 
 type Controller struct {
-	connString string
-	pool       *pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
 //nolint:ireturn
@@ -25,25 +25,32 @@ func New(ctx context.Context, config Config) (storage.Contract, error) {
 		net.JoinHostPort(config.Host, strconv.Itoa(config.Port)) + "/" +
 		config.Database + "?sslmode=disable"
 
-	pool, err := pgxpool.Connect(ctx, connString)
+	cfg, err := pgxpool.ParseConfig(connString)
+	if err != nil {
+		return nil, fmt.Errorf("parse config: %w", err)
+	}
+
+	cfg.ConnConfig.Tracer = otelpgx.NewTracer()
+
+	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("database connect: %w", err)
 	}
 
-	log.Debug().Msg("database connected")
+	slogw.DefaultLogger().DebugContext(ctx, "database connected")
 
 	return &Controller{
-		connString: connString,
-		pool:       pool,
+		pool: pool,
 	}, nil
 }
 
 func (c *Controller) Close() error {
-	log.Debug().Msg("database closing")
+	logger := slogw.DefaultLogger()
+	logger.Debug("database closing")
 
 	c.pool.Close()
 
-	log.Trace().Msg("database closed")
+	logger.Debug("database closed")
 
 	return nil
 }

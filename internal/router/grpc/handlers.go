@@ -3,10 +3,11 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
 	"github.com/yolkhovyy/go-userv/contract/dto"
 	"github.com/yolkhovyy/go-userv/contract/proto"
 	"github.com/yolkhovyy/go-userv/internal/contract/domain"
@@ -56,9 +57,13 @@ func (c *Controller) Get(ctx context.Context, req *proto.UserID) (*proto.User, e
 }
 
 func (c *Controller) List(ctx context.Context, req *proto.ListRequest) (*proto.Users, error) {
+	logger := slogw.DefaultLogger()
+
 	list, err := c.domain.List(ctx, int(req.GetPage()), int(req.GetLimit()), req.GetCountry())
 	if err != nil {
-		log.Error().Err(err).Msg("domain list")
+		logger.ErrorContext(ctx, "domain",
+			slog.String("list", err.Error()),
+		)
 
 		return nil, fmt.Errorf("list: %w", err)
 	}

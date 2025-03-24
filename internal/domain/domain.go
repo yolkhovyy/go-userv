@@ -3,9 +3,10 @@ package domain
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
+	"github.com/yolkhovyy/go-otelw/pkg/slogw"
 	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 
@@ -24,7 +25,9 @@ func (u Controller) Create(ctx context.Context, userInput domain.UserInput) (*do
 
 	createdUser := domain.User(*user)
 
-	log.Info().Msgf("created user %+v", createdUser)
+	slogw.DefaultLogger().InfoContext(ctx, "created ",
+		slog.Any("user", createdUser),
+	)
 
 	return &createdUser, nil
 }
@@ -50,7 +53,9 @@ func (u Controller) Update(ctx context.Context, userUpdate domain.UserUpdate) (*
 
 	updatedUser := domain.User(*user)
 
-	log.Info().Msgf("updated user %+v", updatedUser)
+	slogw.DefaultLogger().InfoContext(ctx, "updated",
+		slog.Any("user", updatedUser),
+	)
 
 	return &updatedUser, nil
 }
@@ -63,7 +68,9 @@ func (u Controller) Get(ctx context.Context, userID uuid.UUID) (*domain.User, er
 
 	domainUser := domain.User(*user)
 
-	log.Info().Msgf("retrieved user %+v", domainUser)
+	slogw.DefaultLogger().InfoContext(ctx, "retrieved",
+		slog.Any("user", domainUser),
+	)
 
 	return &domainUser, nil
 }
@@ -75,9 +82,12 @@ func (u Controller) List(ctx context.Context, page, limit int, countryCode strin
 	}
 
 	if len(users) > 0 {
-		log.Info().Msgf("retrieved %d users %+v...", len(users), users[0])
+		slogw.DefaultLogger().InfoContext(ctx, "retrieved",
+			slog.Int("number of users", len(users)),
+			slog.Any("first user", users[0]),
+		)
 	} else {
-		log.Info().Msg("retrieved no users")
+		slogw.DefaultLogger().InfoContext(ctx, "retrieved no users")
 	}
 
 	nextPage := page + 1
@@ -99,7 +109,9 @@ func (u Controller) Delete(ctx context.Context, userID uuid.UUID) error {
 		return fmt.Errorf("delete user: %w", err)
 	}
 
-	log.Info().Msgf("deleted user %s", userID.String())
+	slogw.DefaultLogger().InfoContext(ctx, "deleted",
+		slog.Any("user", userID.String()),
+	)
 
 	return nil
 }

@@ -14,6 +14,7 @@ docs/dep-*.*
 
 # Keep secrets local
 .env
+.env.secrets
 
 # Snyk
 .dccache
