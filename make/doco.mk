@@ -37,3 +37,7 @@ ifneq ($(RMV),)
 		docker volume rm $(PROJECT_NAME)_user-data; \
 	fi
 endif
+
+.PHONY: doco-watch
+doco-watch: ## Watch running docker containers
+	@watch ${DOCO} ps

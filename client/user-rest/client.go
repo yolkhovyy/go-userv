@@ -11,7 +11,10 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/yolkhovyy/go-otelw/pkg/tracew"
+	"github.com/yolkhovyy/go-userv/client/internal/oteld"
 	"github.com/yolkhovyy/go-userv/contract/dto"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 // REST client for the user-rest service.
@@ -22,14 +25,26 @@ type Client struct {
 
 // Creates a new REST client.
 func NewClient(baseURL string) *Client {
+	transport := otelhttp.NewTransport(http.DefaultTransport)
+
 	return &Client{
 		baseURL:    baseURL,
-		httpClient: &http.Client{},
+		httpClient: &http.Client{Transport: transport},
 	}
 }
 
 // Creates a new user.
 func (c *Client) Create(ctx context.Context, user dto.UserInput) (*dto.User, error) {
+	var err error
+
+	ctx, span := tracew.Start(ctx, "user rest client", "create")
+	defer func() { span.End(err) }()
+
+	ctx, err = oteld.ContextWithBaggageUserName(ctx, user.FirstName, user.LastName)
+	if err != nil {
+		return nil, fmt.Errorf("user name baggage: %w", err)
+	}
+
 	body, err := json.Marshal(user)
 	if err != nil {
 		return nil, fmt.Errorf("marshal user input: %w", err)
@@ -62,6 +77,16 @@ func (c *Client) Create(ctx context.Context, user dto.UserInput) (*dto.User, err
 
 // Retrieves a user by ID.
 func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*dto.User, error) {
+	var err error
+
+	ctx, span := tracew.Start(ctx, "user rest client", "get")
+	defer func() { span.End(err) }()
+
+	ctx, err = oteld.ContextWithBaggageUserID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("user id baggage: %w", err)
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/api/v1/user/%s", c.baseURL, userID), nil)
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
@@ -87,6 +112,16 @@ func (c *Client) Get(ctx context.Context, userID uuid.UUID) (*dto.User, error) {
 
 // Retrieves a list of users.
 func (c *Client) List(ctx context.Context, page, limit int, countryCode string) (*dto.UserList, error) {
+	var err error
+
+	ctx, span := tracew.Start(ctx, "user rest client", "list")
+	defer func() { span.End(err) }()
+
+	ctx, err = oteld.ContextWithBaggagePage(ctx, page, limit, countryCode)
+	if err != nil {
+		return nil, fmt.Errorf("page baggage: %w", err)
+	}
+
 	query := url.Values{}
 	query.Set("page", strconv.Itoa(page))
 	query.Set("limit", strconv.Itoa(limit))
@@ -121,6 +156,16 @@ func (c *Client) List(ctx context.Context, page, limit int, countryCode string) 
 
 // Updates an existing user.
 func (c *Client) Update(ctx context.Context, user dto.UserUpdate) (*dto.User, error) {
+	var err error
+
+	ctx, span := tracew.Start(ctx, "user rest client", "update")
+	defer func() { span.End(err) }()
+
+	ctx, err = oteld.ContextWithBaggageUserID(ctx, user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("user id baggage: %w", err)
+	}
+
 	body, err := json.Marshal(user)
 	if err != nil {
 		return nil, fmt.Errorf("marshal user input: %w", err)
@@ -154,6 +199,16 @@ func (c *Client) Update(ctx context.Context, user dto.UserUpdate) (*dto.User, er
 
 // Deletes a user by ID.
 func (c *Client) Delete(ctx context.Context, userID uuid.UUID) error {
+	var err error
+
+	ctx, span := tracew.Start(ctx, "user rest client", "delete")
+	defer func() { span.End(err) }()
+
+	ctx, err = oteld.ContextWithBaggageUserID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("user id baggage: %w", err)
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodDelete,
 		fmt.Sprintf("%s/api/v1/user/%s", c.baseURL, userID), nil)
 	if err != nil {
