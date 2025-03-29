@@ -1,7 +1,7 @@
 ---
 services:
   user-rest:
-    image: yolkhovyy/user-rest:${USER_VERSION:?must be set in .env}
+    image: yolkhovyy/user-rest:${APP_VERSION:-v0.0.0}
     stop_signal: SIGINT
     depends_on:
       otel-collector:
@@ -16,6 +16,8 @@ services:
       context: .
       dockerfile: cmd/user-rest/Dockerfile
       target: ${BUILD_TARGET:-release}
+      args:
+        - APP_VERSION
     environment:
       - USER_HTTP_PORT
       - USER_HTTP_SHUTDOWNTIMEOUT
@@ -39,7 +41,7 @@ services:
       - USER_METRIC_COLLECTOR_CONNECTION
 
   user-graphql:
-    image: yolkhovyy/user-graphql:${USER_VERSION:?must be set in .env}
+    image: yolkhovyy/user-graphql:${APP_VERSION:-v0.0.0}
     stop_signal: SIGINT
     depends_on:
       postgres:
@@ -52,6 +54,8 @@ services:
       context: .
       dockerfile: cmd/user-graphql/Dockerfile
       target: ${BUILD_TARGET:-release}
+      args:
+        - APP_VERSION
     environment:
       - USER_HTTP_PORT
       - USER_HTTP_SHUTDOWNTIMEOUT
@@ -75,7 +79,7 @@ services:
       - USER_METRIC_COLLECTOR_CONNECTION
 
   user-grpc:
-    image: yolkhovyy/user-grpc:${USER_VERSION:?must be set in .env}
+    image: yolkhovyy/user-grpc:${APP_VERSION:-v0.0.0}
     stop_signal: SIGINT
     depends_on:
       postgres:
@@ -88,6 +92,8 @@ services:
       context: .
       dockerfile: cmd/user-grpc/Dockerfile
       target: ${BUILD_TARGET:-release}
+      args:
+        - APP_VERSION
     environment:
       - USER_GRPC_PORT
       - USER_GRPC_REFLECTION
@@ -110,7 +116,7 @@ services:
       - USER_METRIC_COLLECTOR_CONNECTION
 
   user-notifier:
-    image: yolkhovyy/user-notifier:${USER_VERSION:?must be set in .env}
+    image: yolkhovyy/user-notifier:${APP_VERSION:-v0.0.0}
     stop_signal: SIGINT
     depends_on:
       postgres:
@@ -121,6 +127,8 @@ services:
       context: .
       dockerfile: cmd/user-notifier/Dockerfile
       target: ${BUILD_TARGET:-release}
+      args:
+        - APP_VERSION
     environment:
       - USER_POSTGRES_HOST
       - USER_POSTGRES_PORT

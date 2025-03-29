@@ -1,11 +1,14 @@
 FROM golang:1.23.6-alpine3.20 AS builder
+ARG APP_VERSION
+ARG LDFLAGS="-X github.com/yolkhovyy/go-utilities/buildinfo.Version=${APP_VERSION}"
+
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY cmd/user-rest ./cmd/user-rest
 COPY internal ./internal
 COPY contract ./contract
-RUN go build -o main ./cmd/user-rest && \
+RUN go build -ldflags="${LDFLAGS}" -o main ./cmd/user-rest && \
     go test -tags test -coverpkg=./... -c -o main.test ./cmd/user-rest -args --config config.yml
 
 FROM alpine:3.20 AS release
