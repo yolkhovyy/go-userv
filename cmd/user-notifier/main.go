@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/cmd/user-notifier/version"
 	"github.com/yolkhovyy/go-userv/internal/notifier"
 	"github.com/yolkhovyy/go-userv/internal/otelw"
 	"github.com/yolkhovyy/go-utilities/buildinfo"
@@ -54,7 +55,7 @@ func run() int {
 	// Telemetry.
 	serviceAttributes := []attribute.KeyValue{
 		semconv.ServiceNameKey.String(serviceName),
-		semconv.ServiceVersionKey.String(buildInfo.Version),
+		semconv.ServiceVersionKey.String(version.Tag),
 	}
 
 	logger, tracer, metric, err := otelw.Configure(ctx, config.Config, serviceAttributes)
@@ -75,9 +76,9 @@ func run() int {
 	}()
 
 	logger.InfoContext(ctx, "build info",
-		slog.String("version", buildInfo.Version),
+		slog.String("version", version.Tag),
 		slog.String("time", buildInfo.Time),
-		slog.String("commit", buildInfo.Commit),
+		slog.String("commit", buildInfo.Revision),
 	)
 
 	// Initialize notifier.

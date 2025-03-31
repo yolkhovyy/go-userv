@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/yolkhovyy/go-userv/cmd/user-rest/version"
 	"github.com/yolkhovyy/go-userv/internal/domain"
 	"github.com/yolkhovyy/go-userv/internal/otelw"
 	ginrouter "github.com/yolkhovyy/go-userv/internal/router/gin"
@@ -57,7 +58,7 @@ func run() int {
 	// Telemetry.
 	serviceAttributes := []attribute.KeyValue{
 		semconv.ServiceNameKey.String(serviceName),
-		semconv.ServiceVersionKey.String(buildInfo.Version),
+		semconv.ServiceVersionKey.String(version.Tag),
 	}
 
 	logger, tracer, metric, err := otelw.Configure(ctx, config.Config, serviceAttributes)
@@ -78,9 +79,9 @@ func run() int {
 	}()
 
 	logger.InfoContext(ctx, "build info",
-		slog.String("version", buildInfo.Version),
+		slog.String("version", version.Tag),
 		slog.String("time", buildInfo.Time),
-		slog.String("commit", buildInfo.Commit),
+		slog.String("commit", buildInfo.Revision),
 	)
 
 	// Initialize user domain.

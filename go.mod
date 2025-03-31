@@ -10,7 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.3
 	github.com/lib/pq v1.10.2
 	github.com/stretchr/testify v1.10.0
-	github.com/yolkhovyy/go-otelw v0.1.0
+	github.com/yolkhovyy/go-otelw v0.5.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.60.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0
 	go.opentelemetry.io/otel v1.35.0
@@ -101,7 +101,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	github.com/yolkhovyy/go-utilities v0.2.7
+	github.com/yolkhovyy/go-utilities v0.3.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
