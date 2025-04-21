@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/yolkhovyy/go-otelw/pkg/otelw"
+	"github.com/yolkhovyy/go-otelw/otelw"
 	"github.com/yolkhovyy/go-userv/internal/notifier"
 	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 	"github.com/yolkhovyy/go-utilities/viperx"

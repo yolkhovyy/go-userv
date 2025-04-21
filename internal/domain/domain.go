@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/yolkhovyy/go-otelw/pkg/slogw"
+	"github.com/yolkhovyy/go-otelw/otelw/slogw"
 	"github.com/yolkhovyy/go-userv/internal/contract/domain"
 )
 

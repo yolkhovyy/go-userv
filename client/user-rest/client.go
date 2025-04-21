@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/yolkhovyy/go-otelw/pkg/tracew"
+	"github.com/yolkhovyy/go-otelw/otelw/tracew"
 	"github.com/yolkhovyy/go-userv/client/internal/oteld"
 	"github.com/yolkhovyy/go-userv/contract/dto"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"

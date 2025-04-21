@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/yolkhovyy/go-otelw/pkg/otelw"
+	"github.com/yolkhovyy/go-otelw/otelw"
 	gqlrouter "github.com/yolkhovyy/go-userv/internal/router/graphql"
 	httpserver "github.com/yolkhovyy/go-userv/internal/server/http"
 	"github.com/yolkhovyy/go-userv/internal/storage/postgres"

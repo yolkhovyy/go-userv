@@ -7,8 +7,8 @@ import (
 	"log/slog"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/yolkhovyy/go-otelw/pkg/slogw"
-	"github.com/yolkhovyy/go-otelw/pkg/tracew"
+	"github.com/yolkhovyy/go-otelw/otelw/slogw"
+	"github.com/yolkhovyy/go-otelw/otelw/tracew"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"

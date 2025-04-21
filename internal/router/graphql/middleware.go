@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/graphql-go/graphql"
-	"github.com/yolkhovyy/go-otelw/pkg/slogw"
-	"github.com/yolkhovyy/go-otelw/pkg/tracew"
+	"github.com/yolkhovyy/go-otelw/otelw/slogw"
+	"github.com/yolkhovyy/go-otelw/otelw/tracew"
 )
 
 func withTelemetry(next graphql.FieldResolveFn) graphql.FieldResolveFn {

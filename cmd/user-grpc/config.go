@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/yolkhovyy/go-otelw/pkg/otelw"
+	"github.com/yolkhovyy/go-otelw/otelw"
 	grpcrouter "github.com/yolkhovyy/go-userv/internal/router/grpc"
 	grpcserver "github.com/yolkhovyy/go-userv/internal/server/grpc"
 	"github.com/yolkhovyy/go-userv/internal/storage/postgres"

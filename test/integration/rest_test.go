@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/yolkhovyy/go-otelw/pkg/collector"
-	"github.com/yolkhovyy/go-otelw/pkg/tracew"
+	"github.com/yolkhovyy/go-otelw/otelw/collector"
+	"github.com/yolkhovyy/go-otelw/otelw/tracew"
 	restclient "github.com/yolkhovyy/go-userv/client/user-rest"
 	"github.com/yolkhovyy/go-userv/contract/dto"
 )

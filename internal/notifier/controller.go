@@ -6,7 +6,7 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/segmentio/kafka-go"
-	"github.com/yolkhovyy/go-otelw/pkg/slogw"
+	"github.com/yolkhovyy/go-otelw/otelw/slogw"
 	"github.com/yolkhovyy/go-userv/internal/contract/server"
 	"github.com/yolkhovyy/go-userv/internal/storage/postgres"
 )

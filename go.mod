@@ -10,7 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.3
 	github.com/lib/pq v1.10.2
 	github.com/stretchr/testify v1.10.0
-	github.com/yolkhovyy/go-otelw v0.5.0
+	github.com/yolkhovyy/go-otelw v0.9.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.60.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0
 	go.opentelemetry.io/otel v1.35.0

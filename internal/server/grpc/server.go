@@ -7,7 +7,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/yolkhovyy/go-otelw/pkg/slogw"
+	"github.com/yolkhovyy/go-otelw/otelw/slogw"
 	"github.com/yolkhovyy/go-userv/contract/proto"
 	"github.com/yolkhovyy/go-userv/internal/contract/server"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
