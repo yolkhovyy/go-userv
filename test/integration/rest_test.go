@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/yolkhovyy/go-otelw/otelw/collector"
+	"github.com/yolkhovyy/go-otelw/otelw/otlp"
 	"github.com/yolkhovyy/go-otelw/otelw/tracew"
 	restclient "github.com/yolkhovyy/go-userv/client/user-rest"
 	"github.com/yolkhovyy/go-userv/contract/dto"
@@ -43,10 +43,10 @@ func (s *testSuiteRest) SetupSuite() {
 
 	if s.tracer, err = tracew.Configure(context.Background(), tracew.Config{
 		Enable: true,
-		Collector: collector.Config{
-			Protocol:   collector.GRPC,
-			Connection: "localhost:4317",
-			Insecure:   true,
+		OTLP: otlp.Config{
+			Protocol: otlp.GRPC,
+			Endpoint: "localhost:4317",
+			Insecure: true,
 		},
 	}, nil); err != nil {
 		panic(err)

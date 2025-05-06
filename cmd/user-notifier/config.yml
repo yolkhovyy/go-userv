@@ -20,20 +20,20 @@ Logger:
   TimeFormat: 2006-01-02T15:04:05.999999999Z07:00
   # false (default), true
   Caller: false
-  Collector:
+  OTLP:
     # http, grpc (default)
     Protocol: grpc
     # default localhost:4318
-    Connection: localhost:4318
+    Endpoint: localhost:4318
     Insecure: true
 
 Tracer:
   Enable: true
-  Collector:
+  OTLP:
     # http, grpc (default)
     Protocol: grpc
     # default localhost:4318
-    Connection: localhost:4318
+    Endpoint: localhost:4318
     Insecure: true
 
 Metric:
@@ -45,9 +45,9 @@ Metric:
   # Metric interval
   # default 10s
   Interval: 10s
-  Collector:
+  OTLP:
     # http, grpc (default)
     Protocol: grpc
     # default localhost:4318
-    Connection: localhost:4318
+    Endpoint: localhost:4318
     Insecure: true
